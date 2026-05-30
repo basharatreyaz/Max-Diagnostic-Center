@@ -153,6 +153,12 @@ if (isset($_GET['edit_id'])) {
     }
 }
 $show_form = isset($_GET['action']) && $_GET['action'] == 'add' || isset($_GET['edit_id']);
+
+$favicon = '';
+$favResult = $conn->query("SELECT setting_value FROM settings WHERE setting_key = 'favicon'");
+if ($favResult && $favResult->num_rows > 0) {
+    $favicon = $favResult->fetch_assoc()['setting_value'];
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -161,6 +167,9 @@ $show_form = isset($_GET['action']) && $_GET['action'] == 'add' || isset($_GET['
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - Manage Services</title>
     <link href="https://fonts.bunny.net/css?family=outfit:300,400,500,600,700,800" rel="stylesheet">
+    <?php if (!empty($favicon)): ?>
+        <link rel="icon" href="../<?= htmlspecialchars($favicon) ?>?v=<?= time() ?>">
+    <?php endif; ?>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/admin-services.css">
 </head>

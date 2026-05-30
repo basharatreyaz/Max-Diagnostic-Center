@@ -128,6 +128,35 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_settings'])) {
         }
     }
     
+    // Favicon Upload
+    $allowedFaviconTypes = [
+        'ico' => ['image/x-icon', 'image/vnd.microsoft.icon', 'application/octet-stream'],
+        'jpg' => 'image/jpeg', 'jpeg' => 'image/jpeg', 
+        'png' => 'image/png', 'gif' => 'image/gif', 'webp' => 'image/webp'
+    ];
+    if (isset($_FILES['favicon']) && $_FILES['favicon']['error'] == 0) {
+        $targetDir = "../assets/images/";
+        if (!file_exists($targetDir)) {
+            mkdir($targetDir, 0777, true);
+        }
+        if ($ext = validateSecureUpload($_FILES['favicon']['tmp_name'], $_FILES['favicon']['name'], $_FILES['favicon']['size'], $allowedFaviconTypes)) {
+            $fileName = 'favicon_' . bin2hex(random_bytes(8)) . '.' . $ext;
+            $targetFilePath = $targetDir . $fileName;
+            
+            if (move_uploaded_file($_FILES['favicon']['tmp_name'], $targetFilePath)) {
+                $faviconPath = "assets/images/" . $fileName;
+                $oldFaviconResult = $conn->query("SELECT setting_value FROM settings WHERE setting_key = 'favicon'");
+                if ($oldFaviconResult && $oldFaviconResult->num_rows > 0) {
+                    $oldFavicon = $oldFaviconResult->fetch_assoc()['setting_value'];
+                    if (!empty($oldFavicon) && file_exists("../" . $oldFavicon)) {
+                        unlink("../" . $oldFavicon);
+                    }
+                }
+                $conn->query("INSERT INTO settings (setting_key, setting_value) VALUES ('favicon', '$faviconPath') ON DUPLICATE KEY UPDATE setting_value = '$faviconPath'");
+            }
+        }
+    }
+    
     $_SESSION['setting_msg'] = "Settings updated successfully!";
     header("Location: settings.php");
     exit;
@@ -177,6 +206,9 @@ if (isset($_SESSION['setting_msg'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - Settings</title>
     <link href="https://fonts.bunny.net/css?family=outfit:300,400,500,600,700,800" rel="stylesheet">
+    <?php if (!empty($settings['favicon'])): ?>
+        <link rel="icon" href="../<?= htmlspecialchars($settings['favicon']) ?>?v=<?= time() ?>">
+    <?php endif; ?>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/admin-settings.css">
     <link rel="stylesheet" href="../assets/css/admin-settings-custom.css">
@@ -195,15 +227,27 @@ if (isset($_SESSION['setting_msg'])) {
                 <input type="hidden" name="csrf_token" value="<?= generateCsrfToken() ?>">
                 <div class="card">
                     <h3><i class="fas fa-image"></i> Branding</h3>
-                    <div class="form-group">
-                        <label for="admin_logo">Admin Panel Logo</label>
-                        <?php if (!empty($settings['admin_logo'])): ?>
-                            <div style="margin-bottom: 10px;">
-                                <img src="../<?= htmlspecialchars($settings['admin_logo']) ?>" alt="Current Logo" style="max-height: 50px;">
-                            </div>
-                        <?php endif; ?>
-                        <input type="file" id="admin_logo" name="admin_logo" accept="image/*">
-                        <p class="form-hint">Upload a new logo to replace the default one.</p>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="admin_logo">Admin Panel Logo</label>
+                            <?php if (!empty($settings['admin_logo'])): ?>
+                                <div style="margin-bottom: 10px;">
+                                    <img src="../<?= htmlspecialchars($settings['admin_logo']) ?>" alt="Current Logo" style="max-height: 50px;">
+                                </div>
+                            <?php endif; ?>
+                            <input type="file" id="admin_logo" name="admin_logo" accept="image/*">
+                            <p class="form-hint">Upload a new logo to replace the default one.</p>
+                        </div>
+                        <div class="form-group">
+                            <label for="favicon">Website Favicon</label>
+                            <?php if (!empty($settings['favicon'])): ?>
+                                <div style="margin-bottom: 10px;">
+                                    <img src="../<?= htmlspecialchars($settings['favicon']) ?>" alt="Current Favicon" style="max-height: 32px; border: 1px solid #ddd; padding: 2px;">
+                                </div>
+                            <?php endif; ?>
+                            <input type="file" id="favicon" name="favicon" accept=".ico,.png,.jpg,.jpeg,.gif,.webp">
+                            <p class="form-hint">Upload a favicon (.ico, .png) to appear in the browser tab.</p>
+                        </div>
                     </div>
                 </div>
                 <div class="card">
@@ -227,13 +271,15 @@ if (isset($_SESSION['setting_msg'])) {
                 </div>
                 <div class="card">
                     <h3><i class="fas fa-ticket-alt"></i> Ticket Settings</h3>
-                    <div class="form-group">
-                        <label for="ticket_title">Ticket Title</label>
-                        <input type="text" id="ticket_title" name="ticket_title" value="<?= htmlspecialchars($ticket_title) ?>" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="ticket_phone">Hospital Phone Number</label>
-                        <input type="text" id="ticket_phone" name="ticket_phone" value="<?= htmlspecialchars($ticket_phone) ?>">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="ticket_title">Ticket Title</label>
+                            <input type="text" id="ticket_title" name="ticket_title" value="<?= htmlspecialchars($ticket_title) ?>" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="ticket_phone">Hospital Phone Number</label>
+                            <input type="text" id="ticket_phone" name="ticket_phone" value="<?= htmlspecialchars($ticket_phone) ?>">
+                        </div>
                     </div>
                     <div class="form-group">
                         <label for="ticket_address">Hospital Address</label>
@@ -246,36 +292,40 @@ if (isset($_SESSION['setting_msg'])) {
                 </div>
                 <div class="card">
                     <h3><i class="fas fa-bars"></i> Top Bar Settings</h3>
-                    <div class="form-group">
-                        <label for="top_bar_address">Address</label>
-                        <input type="text" id="top_bar_address" name="top_bar_address" value="<?= htmlspecialchars($top_bar_address) ?>">
-                    </div>
-                    <div class="form-group">
-                        <label for="top_bar_timing">Timing</label>
-                        <input type="text" id="top_bar_timing" name="top_bar_timing" value="<?= htmlspecialchars($top_bar_timing) ?>">
-                    </div>
-                    <div class="form-group">
-                        <label for="top_bar_phone">Phone</label>
-                        <input type="text" id="top_bar_phone" name="top_bar_phone" value="<?= htmlspecialchars($top_bar_phone) ?>">
-                    </div>
-                    <div class="form-group">
-                        <label for="top_bar_email">Email</label>
-                        <input type="email" id="top_bar_email" name="top_bar_email" value="<?= htmlspecialchars($top_bar_email) ?>">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="top_bar_address">Address</label>
+                            <input type="text" id="top_bar_address" name="top_bar_address" value="<?= htmlspecialchars($top_bar_address) ?>">
+                        </div>
+                        <div class="form-group">
+                            <label for="top_bar_timing">Timing</label>
+                            <input type="text" id="top_bar_timing" name="top_bar_timing" value="<?= htmlspecialchars($top_bar_timing) ?>">
+                        </div>
+                        <div class="form-group">
+                            <label for="top_bar_phone">Phone</label>
+                            <input type="text" id="top_bar_phone" name="top_bar_phone" value="<?= htmlspecialchars($top_bar_phone) ?>">
+                        </div>
+                        <div class="form-group">
+                            <label for="top_bar_email">Email</label>
+                            <input type="email" id="top_bar_email" name="top_bar_email" value="<?= htmlspecialchars($top_bar_email) ?>">
+                        </div>
                     </div>
                 </div>
                 <div class="card">
                     <h3><i class="fas fa-share-alt"></i> Social Media Links</h3>
-                    <div class="form-group">
-                        <label for="social_facebook">Facebook URL</label>
-                        <input type="text" id="social_facebook" name="social_facebook" value="<?= htmlspecialchars($social_facebook) ?>">
-                    </div>
-                    <div class="form-group">
-                        <label for="social_instagram">Instagram URL</label>
-                        <input type="text" id="social_instagram" name="social_instagram" value="<?= htmlspecialchars($social_instagram) ?>">
-                    </div>
-                    <div class="form-group">
-                        <label for="social_whatsapp">WhatsApp URL</label>
-                        <input type="text" id="social_whatsapp" name="social_whatsapp" value="<?= htmlspecialchars($social_whatsapp) ?>">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="social_facebook">Facebook URL</label>
+                            <input type="text" id="social_facebook" name="social_facebook" value="<?= htmlspecialchars($social_facebook) ?>">
+                        </div>
+                        <div class="form-group">
+                            <label for="social_instagram">Instagram URL</label>
+                            <input type="text" id="social_instagram" name="social_instagram" value="<?= htmlspecialchars($social_instagram) ?>">
+                        </div>
+                        <div class="form-group">
+                            <label for="social_whatsapp">WhatsApp URL</label>
+                            <input type="text" id="social_whatsapp" name="social_whatsapp" value="<?= htmlspecialchars($social_whatsapp) ?>">
+                        </div>
                     </div>
                 </div>
                 <div class="card">

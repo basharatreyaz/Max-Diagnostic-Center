@@ -60,6 +60,12 @@ list($inquiries, $totalPages, $page) = getPaginatedResults(
     "SELECT COUNT(*) as total FROM inquiries $searchQuery",
     "SELECT * FROM inquiries $searchQuery ORDER BY created_at DESC"
 );
+
+$favicon = '';
+$favResult = $conn->query("SELECT setting_value FROM settings WHERE setting_key = 'favicon'");
+if ($favResult && $favResult->num_rows > 0) {
+    $favicon = $favResult->fetch_assoc()['setting_value'];
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -68,6 +74,9 @@ list($inquiries, $totalPages, $page) = getPaginatedResults(
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - Manage Messages</title>
     <link href="https://fonts.bunny.net/css?family=outfit:300,400,500,600,700,800" rel="stylesheet">
+    <?php if (!empty($favicon)): ?>
+        <link rel="icon" href="../<?= htmlspecialchars($favicon) ?>?v=<?= time() ?>">
+    <?php endif; ?>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/admin-messages.css">
 </head>

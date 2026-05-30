@@ -95,6 +95,7 @@
         width: 100%;
         text-align: center;
         justify-content: center;
+        box-sizing: border-box;
     }
 
     .card-header {
@@ -112,6 +113,7 @@
 
     .filter-input, .filter-select, .btn-filter, .btn-clear {
         width: 100%;
+        box-sizing: border-box;
     }
 
     /* Prevent iOS zoom by ensuring form fields are at least 16px */

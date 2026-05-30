@@ -33,7 +33,7 @@ $display_id = date('d-m-', strtotime($appointment['appointment_date'])) . $daily
 
 // Fetch Ticket Settings
 $settings = [];
-$settingsResult = $conn->query("SELECT setting_key, setting_value FROM settings WHERE setting_key IN ('ticket_title', 'ticket_footer_text', 'ticket_phone', 'ticket_address', 'admin_logo')");
+$settingsResult = $conn->query("SELECT setting_key, setting_value FROM settings WHERE setting_key IN ('ticket_title', 'ticket_footer_text', 'ticket_phone', 'ticket_address', 'admin_logo', 'favicon')");
 if ($settingsResult) {
     while ($row = $settingsResult->fetch_assoc()) {
         $settings[$row['setting_key']] = $row['setting_value'];
@@ -45,6 +45,7 @@ $ticket_phone = $settings['ticket_phone'] ?? '+91 7051674869';
 $ticket_address = $settings['ticket_address'] ?? 'Opposite JK Bank, Hyderbeigh, Jammu & Kashmir 193121';
 $admin_logo = isset($settings['admin_logo']) && !empty($settings['admin_logo']) ? '../' . $settings['admin_logo'] : '../assets/images/logo.png';
 $admin_logo_v = $admin_logo . '?v=' . time(); // Cache-buster
+$favicon = $settings['favicon'] ?? '';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -53,6 +54,9 @@ $admin_logo_v = $admin_logo . '?v=' . time(); // Cache-buster
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Print Ticket - <?= htmlspecialchars($appointment['patient_name']) ?></title>
     <link href="https://fonts.bunny.net/css?family=outfit:400,600,700" rel="stylesheet">
+    <?php if (!empty($favicon)): ?>
+        <link rel="icon" href="../<?= htmlspecialchars($favicon) ?>?v=<?= time() ?>">
+    <?php endif; ?>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/print-ticket.css">
 </head>

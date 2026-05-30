@@ -36,6 +36,12 @@ if ($conn->query("SHOW TABLES LIKE 'appointments'")->num_rows > 0) {
 if ($conn->query("SHOW TABLES LIKE 'reports'")->num_rows > 0) {
     $reportsCount = $conn->query("SELECT COUNT(*) as count FROM reports")->fetch_assoc()['count'] ?? 0;
 }
+
+$favicon = '';
+$favResult = $conn->query("SELECT setting_value FROM settings WHERE setting_key = 'favicon'");
+if ($favResult && $favResult->num_rows > 0) {
+    $favicon = $favResult->fetch_assoc()['setting_value'];
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -44,6 +50,9 @@ if ($conn->query("SHOW TABLES LIKE 'reports'")->num_rows > 0) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
     <link href="https://fonts.bunny.net/css?family=outfit:300,400,500,600,700,800" rel="stylesheet">
+    <?php if (!empty($favicon)): ?>
+        <link rel="icon" href="../<?= htmlspecialchars($favicon) ?>?v=<?= time() ?>">
+    <?php endif; ?>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/admin-dashboard.css">
 </head>

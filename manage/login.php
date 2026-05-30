@@ -19,6 +19,12 @@ if ($logoResult && $logoResult->num_rows > 0) {
     }
 }
 
+$favicon = '';
+$favResult = $conn->query("SELECT setting_value FROM settings WHERE setting_key = 'favicon'");
+if ($favResult && $favResult->num_rows > 0) {
+    $favicon = $favResult->fetch_assoc()['setting_value'];
+}
+
 $error = '';
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['login'])) {
     if (!isset($_POST['csrf_token']) || !verifyCsrfToken($_POST['csrf_token'])) die("CSRF validation failed.");
@@ -63,6 +69,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['login'])) {
     <title>Admin Login - Max Diagnostic Center</title>
     <link href="https://fonts.bunny.net/css?family=outfit:300,400,500,600,700,800" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <?php if (!empty($favicon)): ?>
+        <link rel="icon" href="../<?= htmlspecialchars($favicon) ?>?v=<?= time() ?>">
+    <?php endif; ?>
     <link rel="stylesheet" href="../assets/css/global.css">
     <link rel="stylesheet" href="../assets/css/admin-login.css">
     <link rel="stylesheet" href="../assets/css/admin-responsive.css">

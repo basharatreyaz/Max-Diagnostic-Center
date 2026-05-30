@@ -3,6 +3,10 @@ $host = "sql101.infinityfree.com";
 $username = "if0_41953766";
 $password = "7fp9okG4XNJ";
 $dbname = "if0_41953766_maxcenter";
+// $host="localhost";
+// $username="root";
+// $password="";
+// $dbname="max";
 
 // Create connection
 $conn = new mysqli($host, $username, $password, $dbname);

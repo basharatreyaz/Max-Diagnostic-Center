@@ -17,6 +17,8 @@ $top_bar_address = $app_settings['top_bar_address'] ?? 'Hyderbeigh, Baramulla, J
 $top_bar_timing = $app_settings['top_bar_timing'] ?? 'Mon - Sat: 8:00 AM - 8:00 PM | Sun: 9:00 AM - 2:00 PM';
 $top_bar_phone = $app_settings['top_bar_phone'] ?? '+91 7051674869';
 $top_bar_email = $app_settings['top_bar_email'] ?? 'info@maxdiagnostic.com';
+
+$favicon = isset($app_settings['favicon']) && !empty($app_settings['favicon']) ? $app_settings['favicon'] : '';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -24,6 +26,10 @@ $top_bar_email = $app_settings['top_bar_email'] ?? 'info@maxdiagnostic.com';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Max Diagnostic Center | Hyderbeigh</title>
+
+    <?php if ($favicon): ?>
+        <link rel="icon" href="<?= htmlspecialchars($favicon) ?>?v=<?= time() ?>">
+    <?php endif; ?>
 
     <!-- Bunny Fonts -->
     <link href="https://fonts.bunny.net/css?family=outfit:300,400,500,600,700,800" rel="stylesheet">
