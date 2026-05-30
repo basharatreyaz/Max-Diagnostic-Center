@@ -64,9 +64,9 @@ function handleAppointmentBooking($conn, $postData) {
 // Reusable pagination functions
 function getPaginatedResults($conn, $countQuery, $dataQuery, $limit = 10) {
     // Check for a custom limit in settings
-    $settingResult = $conn->query("SELECT setting_value FROM settings WHERE setting_key = 'items_per_page'");
-    if ($settingResult && $settingResult->num_rows > 0) {
-        $limit = (int)$settingResult->fetch_assoc()['setting_value'];
+    $settings = getCachedSettings($conn);
+    if (!empty($settings['items_per_page'])) {
+        $limit = (int)$settings['items_per_page'];
     }
 
     $page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int)$_GET['page'] : 1;
@@ -123,6 +123,27 @@ function validateSecureUpload($tmpName, $originalName, $size, $allowedMimeTypes,
     }
     
     return $extension;
+}
+
+// Settings Cache Functions
+function getCachedSettings($conn) {
+    $cacheFile = __DIR__ . '/settings_cache.json';
+    if (file_exists($cacheFile)) {
+        $cached = @json_decode(file_get_contents($cacheFile), true);
+        if (is_array($cached)) return $cached;
+    }
+    $settings = [];
+    $result = $conn->query("SELECT setting_key, setting_value FROM settings");
+    if ($result) {
+        while ($row = $result->fetch_assoc()) $settings[$row['setting_key']] = $row['setting_value'];
+        @file_put_contents($cacheFile, json_encode($settings));
+    }
+    return $settings;
+}
+
+function clearSettingsCache() {
+    $cacheFile = __DIR__ . '/settings_cache.json';
+    if (file_exists($cacheFile)) @unlink($cacheFile);
 }
 ?>
 EOD;

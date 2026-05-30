@@ -66,6 +66,8 @@ $favResult = $conn->query("SELECT setting_value FROM settings WHERE setting_key 
 if ($favResult && $favResult->num_rows > 0) {
     $favicon = $favResult->fetch_assoc()['setting_value'];
 }
+$settings = getCachedSettings($conn);
+$favicon = $settings['favicon'] ?? '';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -76,6 +78,7 @@ if ($favResult && $favResult->num_rows > 0) {
     <link href="https://fonts.bunny.net/css?family=outfit:300,400,500,600,700,800" rel="stylesheet">
     <?php if (!empty($favicon)): ?>
         <link rel="icon" href="../<?= htmlspecialchars($favicon) ?>?v=<?= time() ?>">
+        <link rel="icon" href="../<?= htmlspecialchars($favicon) ?>">
     <?php endif; ?>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/admin-messages.css">

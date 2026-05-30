@@ -10,20 +10,9 @@ if (isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true
 require_once '../includes/db.php';
 
 // Fetch admin logo
-$adminLogo = '../assets/images/logo.png';
-$logoResult = $conn->query("SELECT setting_value FROM settings WHERE setting_key = 'admin_logo'");
-if ($logoResult && $logoResult->num_rows > 0) {
-    $logoValue = $logoResult->fetch_assoc()['setting_value'];
-    if (!empty($logoValue)) {
-        $adminLogo = '../' . $logoValue;
-    }
-}
-
-$favicon = '';
-$favResult = $conn->query("SELECT setting_value FROM settings WHERE setting_key = 'favicon'");
-if ($favResult && $favResult->num_rows > 0) {
-    $favicon = $favResult->fetch_assoc()['setting_value'];
-}
+$settings = getCachedSettings($conn);
+$adminLogo = !empty($settings['admin_logo']) ? '../' . $settings['admin_logo'] : '../assets/images/logo.png';
+$favicon = $settings['favicon'] ?? '';
 
 $error = '';
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['login'])) {
@@ -70,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['login'])) {
     <link href="https://fonts.bunny.net/css?family=outfit:300,400,500,600,700,800" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <?php if (!empty($favicon)): ?>
-        <link rel="icon" href="../<?= htmlspecialchars($favicon) ?>?v=<?= time() ?>">
+        <link rel="icon" href="../<?= htmlspecialchars($favicon) ?>">
     <?php endif; ?>
     <link rel="stylesheet" href="../assets/css/global.css">
     <link rel="stylesheet" href="../assets/css/admin-login.css">

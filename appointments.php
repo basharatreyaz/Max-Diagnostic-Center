@@ -5,15 +5,7 @@ $appointment_msg = '';
 $appointment_error = '';
 
 // Fetch appointment form settings
-$form_settings = [];
-if (isset($conn)) {
-    $settingsResult = $conn->query("SELECT setting_key, setting_value FROM settings WHERE setting_key LIKE 'appointment_%'");
-    if ($settingsResult) {
-        while ($row = $settingsResult->fetch_assoc()) {
-            $form_settings[$row['setting_key']] = $row['setting_value'];
-        }
-    }
-}
+$form_settings = getCachedSettings($conn);
 
 if (isset($_SESSION['appointment_msg'])) {
     $appointment_msg = $_SESSION['appointment_msg'];

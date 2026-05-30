@@ -292,10 +292,10 @@ if ($favResult && $favResult->num_rows > 0) {
                     </select>
                 </div>
                 <div class="form-actions">
-                    <button type="submit" name="add_appointment" class="btn-primary">
+                    <button type="submit" name="add_appointment" class="btn-primary" style="font-family: 'Outfit', sans-serif;">
                         <i class="fas fa-save"></i> Save Appointment
                     </button>
-                    <a href="appointments.php" class="btn-cancel"><i class="fas fa-times"></i> Cancel</a>
+                    <a href="appointments.php" style="background: #f1f5f9; color: #64748b; padding: 14px 25px; border-radius: 8px; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: 0.3s; box-sizing: border-box;"><i class="fas fa-times"></i> Cancel</a>
                 </div>
             </form>
         </div>

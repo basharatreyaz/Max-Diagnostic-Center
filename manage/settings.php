@@ -29,6 +29,8 @@ if ($tableCheck && $tableCheck->num_rows == 0) {
     $conn->query("INSERT INTO settings (setting_key, setting_value) VALUES ('appointment_show_age', '1'), ('appointment_show_gender', '1'), ('appointment_show_address', '0')");
     $conn->query("INSERT INTO settings (setting_key, setting_value) VALUES ('top_bar_address', 'Hyderbeigh, Baramulla, Jammu & Kashmir'), ('top_bar_timing', 'Mon - Sat: 8:00 AM - 8:00 PM | Sun: 9:00 AM - 2:00 PM'), ('top_bar_phone', '+91 7051674869'), ('top_bar_email', 'info@maxdiagnostic.com')");
     $conn->query("INSERT INTO settings (setting_key, setting_value) VALUES ('social_facebook', '#'), ('social_instagram', '#'), ('social_whatsapp', '#')");
+    $conn->query("INSERT INTO settings (setting_key, setting_value) VALUES ('whatsapp_number', '917051674869')");
+    clearSettingsCache();
 } else {
     // Ensure column can hold large scripts
     $columnInfo = $conn->query("SHOW COLUMNS FROM settings WHERE Field = 'setting_value'");
@@ -43,6 +45,8 @@ if ($tableCheck && $tableCheck->num_rows == 0) {
     $conn->query("INSERT IGNORE INTO settings (setting_key, setting_value) VALUES ('appointment_show_age', '1'), ('appointment_show_gender', '1'), ('appointment_show_address', '0')");
     $conn->query("INSERT IGNORE INTO settings (setting_key, setting_value) VALUES ('top_bar_address', 'Hyderbeigh, Baramulla, Jammu & Kashmir'), ('top_bar_timing', 'Mon - Sat: 8:00 AM - 8:00 PM | Sun: 9:00 AM - 2:00 PM'), ('top_bar_phone', '+91 7051674869'), ('top_bar_email', 'info@maxdiagnostic.com')");
     $conn->query("INSERT IGNORE INTO settings (setting_key, setting_value) VALUES ('social_facebook', '#'), ('social_instagram', '#'), ('social_whatsapp', '#')");
+    $conn->query("INSERT IGNORE INTO settings (setting_key, setting_value) VALUES ('whatsapp_number', '917051674869')");
+    clearSettingsCache();
 }
 
 // Handle form submission
@@ -88,6 +92,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_settings'])) {
     $conn->query("INSERT INTO settings (setting_key, setting_value) VALUES ('social_facebook', '$social_facebook') ON DUPLICATE KEY UPDATE setting_value = '$social_facebook'");
     $conn->query("INSERT INTO settings (setting_key, setting_value) VALUES ('social_instagram', '$social_instagram') ON DUPLICATE KEY UPDATE setting_value = '$social_instagram'");
     $conn->query("INSERT INTO settings (setting_key, setting_value) VALUES ('social_whatsapp', '$social_whatsapp') ON DUPLICATE KEY UPDATE setting_value = '$social_whatsapp'");
+
+    $whatsapp_number = $conn->real_escape_string($_POST['whatsapp_number']);
+    $conn->query("INSERT INTO settings (setting_key, setting_value) VALUES ('whatsapp_number', '$whatsapp_number') ON DUPLICATE KEY UPDATE setting_value = '$whatsapp_number'");
 
     // Appointment Form Settings
     $appointment_settings = [
@@ -157,19 +164,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_settings'])) {
         }
     }
     
+    clearSettingsCache();
     $_SESSION['setting_msg'] = "Settings updated successfully!";
     header("Location: settings.php");
     exit;
 }
 
 // Fetch current setting
-$settings = [];
-$settingsResult = $conn->query("SELECT * FROM settings");
-if ($settingsResult) {
-    while ($row = $settingsResult->fetch_assoc()) {
-        $settings[$row['setting_key']] = $row['setting_value'];
-    }
-}
+$settings = getCachedSettings($conn);
 
 $current_limit = (int)($settings['items_per_page'] ?? 10);
 $header_scripts = $settings['header_scripts'] ?? '';
@@ -189,6 +191,8 @@ $social_facebook = $settings['social_facebook'] ?? '#';
 $social_instagram = $settings['social_instagram'] ?? '#';
 $social_whatsapp = $settings['social_whatsapp'] ?? '#';
 
+$whatsapp_number = $settings['whatsapp_number'] ?? '917051674869';
+
 $settings['appointment_show_age'] = $settings['appointment_show_age'] ?? 0;
 $settings['appointment_show_gender'] = $settings['appointment_show_gender'] ?? 0;
 $settings['appointment_show_address'] = $settings['appointment_show_address'] ?? 0;
@@ -207,7 +211,7 @@ if (isset($_SESSION['setting_msg'])) {
     <title>Admin - Settings</title>
     <link href="https://fonts.bunny.net/css?family=outfit:300,400,500,600,700,800" rel="stylesheet">
     <?php if (!empty($settings['favicon'])): ?>
-        <link rel="icon" href="../<?= htmlspecialchars($settings['favicon']) ?>?v=<?= time() ?>">
+        <link rel="icon" href="../<?= htmlspecialchars($settings['favicon']) ?>">
     <?php endif; ?>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/admin-settings.css">
@@ -326,6 +330,10 @@ if (isset($_SESSION['setting_msg'])) {
                             <label for="social_whatsapp">WhatsApp URL</label>
                             <input type="text" id="social_whatsapp" name="social_whatsapp" value="<?= htmlspecialchars($social_whatsapp) ?>">
                         </div>
+                        <div class="form-group">
+                            <label for="whatsapp_number">WhatsApp Chat Number (Mobile Bottom Bar)</label>
+                            <input type="text" id="whatsapp_number" name="whatsapp_number" placeholder="e.g. 917051674869" value="<?= htmlspecialchars($whatsapp_number) ?>">
+                        </div>
                     </div>
                 </div>
                 <div class="card">
@@ -343,7 +351,7 @@ if (isset($_SESSION['setting_msg'])) {
                         <input type="checkbox" id="show_address" name="appointment_show_address" value="1" <?= ($settings['appointment_show_address'] ?? 0) ? 'checked' : '' ?>>
                     </div>
                 </div>
-                <button type="submit" name="update_settings" class="btn-primary"><i class="fas fa-save"></i> Save All Settings</button>
+                <button type="submit" name="update_settings" class="btn-primary" style="font-family: 'Outfit', sans-serif;"><i class="fas fa-save"></i> Save All Settings</button>
             </form>
         </div>
     </main>

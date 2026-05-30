@@ -225,17 +225,17 @@ if ($favResult && $favResult->num_rows > 0) {
                     <input type="text" name="specialty" placeholder="Specialty (e.g., Cardiologist)" value="<?= $edit_doctor ? htmlspecialchars($edit_doctor['specialty']) : '' ?>" required>
                     <input type="text" name="days" placeholder="Available Days (e.g., Mon - Sat)" value="<?= $edit_doctor ? htmlspecialchars($edit_doctor['days']) : '' ?>" required>
                     <input type="text" name="time" placeholder="Timing (e.g., 10:00 AM - 2:00 PM)" value="<?= $edit_doctor ? htmlspecialchars($edit_doctor['time']) : '' ?>" required>
-                    <select name="is_active" required>
+                    <select name="is_active" required style="padding: 14px 15px; border: 1px solid #e2e8f0; border-radius: 8px; font-family: 'Outfit', sans-serif; font-size: 15px; color: #64748b; background-color: #fff; outline: none; width: 100%; box-sizing: border-box; cursor: pointer; transition: 0.3s;">
                         <option value="1" <?= ($edit_doctor && (!isset($edit_doctor['is_active']) || $edit_doctor['is_active'] == 1)) ? 'selected' : '' ?>>Active (Visible)</option>
                         <option value="0" <?= ($edit_doctor && isset($edit_doctor['is_active']) && $edit_doctor['is_active'] == 0) ? 'selected' : '' ?>>Inactive (Hidden)</option>
                     </select>
                     <input type="file" name="image" accept="image/*" <?= $edit_doctor ? '' : 'required' ?>>
                 </div>
                 <div class="form-actions">
-                    <button type="submit" name="<?= $edit_doctor ? 'update_doctor' : 'add_doctor' ?>" class="btn-primary">
+                    <button type="submit" name="<?= $edit_doctor ? 'update_doctor' : 'add_doctor' ?>" class="btn-primary" style="font-family: 'Outfit', sans-serif;">
                         <i class="fas fa-save"></i> <?= $edit_doctor ? 'Update Doctor' : 'Save Doctor' ?>
                     </button>
-                    <a href="doctors.php" class="btn-cancel"><i class="fas fa-times"></i> Cancel</a>
+                    <a href="doctors.php" style="background: #f1f5f9; color: #64748b; padding: 14px 25px; border-radius: 8px; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: 0.3s; box-sizing: border-box;"><i class="fas fa-times"></i> Cancel</a>
                 </div>
             </form>
         </div>

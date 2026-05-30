@@ -2,16 +2,9 @@
 require_once __DIR__ . '/db.php';
 
 // Fetch all settings
-$app_settings = [];
-$settingsResult = $conn->query("SELECT setting_key, setting_value FROM settings");
-if ($settingsResult) {
-    while ($row = $settingsResult->fetch_assoc()) {
-        $app_settings[$row['setting_key']] = $row['setting_value'];
-    }
-}
+$app_settings = getCachedSettings($conn);
 
 $frontend_logo = isset($app_settings['admin_logo']) && !empty($app_settings['admin_logo']) ? $app_settings['admin_logo'] : 'assets/images/logo.png';
-$frontend_logo_v = $frontend_logo . '?v=' . time(); // Cache-buster
 
 $top_bar_address = $app_settings['top_bar_address'] ?? 'Hyderbeigh, Baramulla, Jammu & Kashmir';
 $top_bar_timing = $app_settings['top_bar_timing'] ?? 'Mon - Sat: 8:00 AM - 8:00 PM | Sun: 9:00 AM - 2:00 PM';
@@ -29,7 +22,7 @@ $favicon = isset($app_settings['favicon']) && !empty($app_settings['favicon']) ?
     <title>Max Diagnostic Center | Hyderbeigh</title>
 
     <?php if ($favicon): ?>
-        <link rel="icon" href="<?= htmlspecialchars($favicon) ?>?v=<?= time() ?>">
+        <link rel="icon" href="<?= htmlspecialchars($favicon) ?>">
     <?php endif; ?>
 
     <!-- Bunny Fonts -->
@@ -106,7 +99,7 @@ $favicon = isset($app_settings['favicon']) && !empty($app_settings['favicon']) ?
 
             <div class="logo">
 
-                <a href="index.php"><img class="logo-image" src="<?= htmlspecialchars($frontend_logo_v) ?>" alt="Max Diagnostic Center"></a>
+                <a href="index.php"><img class="logo-image" src="<?= htmlspecialchars($frontend_logo) ?>" alt="Max Diagnostic Center"></a>
 
             </div>
 

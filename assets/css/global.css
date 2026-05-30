@@ -62,6 +62,10 @@ ul{
     list-style:none;
 }
 
+button, input, select, textarea {
+    font-family: inherit;
+}
+
 /* Prevent iOS auto-linking phone number color change */
 a[href^="tel"] {
     color: inherit !important;

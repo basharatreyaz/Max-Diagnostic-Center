@@ -12,6 +12,7 @@
 
                 <img class="footer-logo"
                     src="<?= htmlspecialchars($frontend_logo_v ?? 'assets/images/logo.png') ?>"
+                    src="<?= htmlspecialchars($frontend_logo ?? 'assets/images/logo.png') ?>"
                     alt="Max Diagnostic Center">
 
                 <p class="footer-desc">
@@ -27,6 +28,8 @@
                 $social_facebook = $app_settings['social_facebook'] ?? '#';
                 $social_instagram = $app_settings['social_instagram'] ?? '#';
                 $social_whatsapp = $app_settings['social_whatsapp'] ?? '#';
+                $whatsapp_number = $app_settings['whatsapp_number'] ?? '917051674869';
+                $whatsapp_chat_link = !empty(trim($whatsapp_number)) ? "https://wa.me/" . preg_replace('/[^0-9]/', '', $whatsapp_number) : '#';
                 ?>
                 <div class="social-icons">
 
@@ -174,7 +177,7 @@
 </a>
 
 <div class="bottom-action-bar">
-    <a href="<?= htmlspecialchars($social_whatsapp ?? '#') ?>" class="action-btn whatsapp-btn" target="_blank">
+    <a href="<?= htmlspecialchars($whatsapp_chat_link) ?>" class="action-btn whatsapp-btn" target="_blank">
         <i class="fab fa-whatsapp"></i> WhatsApp
     </a>
     <a href="appointments.php" class="action-btn appointment-btn-bar">

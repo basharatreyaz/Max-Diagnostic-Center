@@ -154,11 +154,8 @@ if (isset($_GET['edit_id'])) {
 }
 $show_form = isset($_GET['action']) && $_GET['action'] == 'add' || isset($_GET['edit_id']);
 
-$favicon = '';
-$favResult = $conn->query("SELECT setting_value FROM settings WHERE setting_key = 'favicon'");
-if ($favResult && $favResult->num_rows > 0) {
-    $favicon = $favResult->fetch_assoc()['setting_value'];
-}
+$settings = getCachedSettings($conn);
+$favicon = $settings['favicon'] ?? '';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -168,7 +165,7 @@ if ($favResult && $favResult->num_rows > 0) {
     <title>Admin - Manage Services</title>
     <link href="https://fonts.bunny.net/css?family=outfit:300,400,500,600,700,800" rel="stylesheet">
     <?php if (!empty($favicon)): ?>
-        <link rel="icon" href="../<?= htmlspecialchars($favicon) ?>?v=<?= time() ?>">
+        <link rel="icon" href="../<?= htmlspecialchars($favicon) ?>">
     <?php endif; ?>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/admin-services.css">
@@ -209,10 +206,10 @@ if ($favResult && $favResult->num_rows > 0) {
                 <textarea name="description" placeholder="Service Description..." rows="4" required><?= $edit_service ? htmlspecialchars($edit_service['description']) : '' ?></textarea>
                 
                 <div class="form-actions">
-                    <button type="submit" name="<?= $edit_service ? 'update_service' : 'add_service' ?>" class="btn-primary">
+                    <button type="submit" name="<?= $edit_service ? 'update_service' : 'add_service' ?>" class="btn-primary" style="font-family: 'Outfit', sans-serif;">
                         <i class="fas fa-save"></i> <?= $edit_service ? 'Update Service' : 'Save Service' ?>
                     </button>
-                    <a href="services.php" class="btn-cancel"><i class="fas fa-times"></i> Cancel</a>
+                    <a href="services.php" style="background: #f1f5f9; color: #64748b; padding: 14px 25px; border-radius: 8px; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: 0.3s; box-sizing: border-box;"><i class="fas fa-times"></i> Cancel</a>
                 </div>
             </form>
         </div>

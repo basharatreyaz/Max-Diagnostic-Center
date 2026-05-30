@@ -32,19 +32,12 @@ if ($countResult && $countResult->num_rows > 0) {
 $display_id = date('d-m-', strtotime($appointment['appointment_date'])) . $daily_no;
 
 // Fetch Ticket Settings
-$settings = [];
-$settingsResult = $conn->query("SELECT setting_key, setting_value FROM settings WHERE setting_key IN ('ticket_title', 'ticket_footer_text', 'ticket_phone', 'ticket_address', 'admin_logo', 'favicon')");
-if ($settingsResult) {
-    while ($row = $settingsResult->fetch_assoc()) {
-        $settings[$row['setting_key']] = $row['setting_value'];
-    }
-}
+$settings = getCachedSettings($conn);
 $ticket_title = $settings['ticket_title'] ?? 'Appointment Token';
 $ticket_footer_text = $settings['ticket_footer_text'] ?? 'Please present this token at the reception desk.';
 $ticket_phone = $settings['ticket_phone'] ?? '+91 7051674869';
 $ticket_address = $settings['ticket_address'] ?? 'Opposite JK Bank, Hyderbeigh, Jammu & Kashmir 193121';
 $admin_logo = isset($settings['admin_logo']) && !empty($settings['admin_logo']) ? '../' . $settings['admin_logo'] : '../assets/images/logo.png';
-$admin_logo_v = $admin_logo . '?v=' . time(); // Cache-buster
 $favicon = $settings['favicon'] ?? '';
 ?>
 <!DOCTYPE html>
@@ -55,15 +48,15 @@ $favicon = $settings['favicon'] ?? '';
     <title>Print Ticket - <?= htmlspecialchars($appointment['patient_name']) ?></title>
     <link href="https://fonts.bunny.net/css?family=outfit:400,600,700" rel="stylesheet">
     <?php if (!empty($favicon)): ?>
-        <link rel="icon" href="../<?= htmlspecialchars($favicon) ?>?v=<?= time() ?>">
+        <link rel="icon" href="../<?= htmlspecialchars($favicon) ?>">
     <?php endif; ?>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/print-ticket.css">
 </head>
 <body>
-    <div class="ticket" style="--bg-logo: url('<?= htmlspecialchars($admin_logo_v) ?>');">
+    <div class="ticket" style="--bg-logo: url('<?= htmlspecialchars($admin_logo) ?>');">
         <div class="ticket-header">
-            <img src="<?= htmlspecialchars($admin_logo_v) ?>" alt="Max Diagnostic Center">
+            <img src="<?= htmlspecialchars($admin_logo) ?>" alt="Max Diagnostic Center">
             <div class="header-content">
                 <h2><?= htmlspecialchars($ticket_title) ?></h2>
                 <div class="contact-info">
