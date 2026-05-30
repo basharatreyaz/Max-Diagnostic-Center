@@ -25,6 +25,19 @@
     cursor: pointer;
 }
 
+/* Prevent iOS auto-linking phone number color change */
+a[href^="tel"] {
+    color: inherit !important;
+    text-decoration: none !important;
+}
+
+/* Prevent iOS zoom by ensuring form fields are at least 16px globally on touch devices */
+@media (max-width: 992px) {
+    input, select, textarea {
+        font-size: 16px !important;
+    }
+}
+
 /* Base Mobile Styles */
 @media (max-width: 992px) {
     .dashboard-grid, .form-grid {
@@ -114,11 +127,6 @@
     .filter-input, .filter-select, .btn-filter, .btn-clear {
         width: 100%;
         box-sizing: border-box;
-    }
-
-    /* Prevent iOS zoom by ensuring form fields are at least 16px */
-    input, select, textarea {
-        font-size: 16px !important;
     }
 
     /* Make Tables Card-based (One item per row) */
