@@ -1,0 +1,2 @@
+.report-download-btn { background: var(--primary); color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; transition: 0.3s; display: inline-block; }
+.report-download-btn:hover { background: var(--secondary); transform: translateY(-2px); color: white; }

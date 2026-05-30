@@ -1,0 +1,70 @@
+/* Mobile Slide-out Menu Styles */
+@media (max-width: 992px) {
+    .header .container {
+        display: flex !important;
+        flex-direction: row !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        flex-wrap: nowrap !important;
+        width: 100%;
+    }
+    .logo {
+        flex-shrink: 0;
+        max-width: 75%;
+    }
+    .logo-image {
+        max-height: 45px;
+        width: auto;
+    }
+    .header-actions .appointment-btn {
+        display: none; /* Hide button on mobile to keep logo and hamburger on same row */
+    }
+    .mobile-only { display: block !important; }
+    .navbar {
+        position: fixed !important;
+        top: 0;
+        right: -320px;
+        width: 300px;
+        max-width: 80vw;
+        height: 100vh;
+        background: #0f172a; /* Dark background */
+        box-shadow: -5px 0 20px rgba(0, 0, 0, 0.15);
+        transition: right 0.3s ease-in-out;
+        z-index: 999;
+        padding-top: 80px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        visibility: visible !important;
+    }
+    .navbar.active {
+        right: 0 !important;
+    }
+    .nav-list {
+        flex-direction: column !important;
+        width: 100%;
+    }
+    .nav-item {
+        width: 100%;
+        margin: 0 !important;
+        border-bottom: 1px solid #1e293b;
+    }
+    .nav-link {
+        display: block;
+        padding: 15px 25px !important;
+        color: #f8fafc !important; /* Light text for dark bg */
+    }
+    .header-actions {
+        position: relative;
+        z-index: 1000;
+        display: flex !important;
+        align-items: center !important;
+        flex-shrink: 0;
+    }
+    .navbar.active + .header-actions .menu-toggle i {
+        color: #ffffff; /* White hamburger when menu is dark */
+    }
+}
+@media (min-width: 993px) {
+    .mobile-only { display: none !important; }
+}

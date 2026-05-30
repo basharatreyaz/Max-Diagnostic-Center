@@ -1,0 +1,5 @@
+.perm-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 10px; }
+.perm-label { display: flex; align-items: center; gap: 8px; background: #f8fafc; padding: 12px; border-radius: 8px; border: 1px solid #e2e8f0; cursor: pointer; transition: all 0.3s ease; }
+body.dark-mode .perm-label { background: var(--bg-light); border-color: var(--border); color: var(--text-dark); }
+body.dark-mode h4 { color: var(--text-dark); }
+.error-msg { background: #fef2f2; color: #ef4444; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-weight: 500; border: 1px solid #fecaca; line-height: 1.6; }

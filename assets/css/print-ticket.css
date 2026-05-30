@@ -1,0 +1,190 @@
+body {
+    font-family: 'Outfit', sans-serif;
+    background: #f1f5f9;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    color: #333;
+}
+.ticket {
+    background: white;
+    width: 100%;
+    max-width: 700px;
+    padding: 0;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.07);
+    border: 1px solid #e2e8f0;
+    overflow: hidden;
+}
+.ticket-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+    background: #f8fafc;
+    border-bottom: 1px solid #e2e8f0;
+}
+.ticket-header img {
+    max-height: 50px;
+}
+.header-content {
+    text-align: right;
+}
+.ticket-header h2 {
+    margin: 0;
+    color: #0b2b52;
+    font-family: 'Outfit', sans-serif;
+    font-size: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+}
+.contact-info {
+    margin-top: 5px;
+    font-size: 11px;
+    color: #64748b;
+}
+.contact-info p {
+    margin: 2px 0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
+}
+.token-id {
+    display: inline-block;
+    background: #e0f2fe;
+    color: #0284c7;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 700;
+    margin-top: 10px;
+    font-family: monospace;
+    display: none;
+}
+.ticket-body {
+    padding: 25px 30px;
+    position: relative;
+    z-index: 1;
+}
+.ticket-body::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60%;
+    height: 60%;
+    background-image: var(--bg-logo);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    opacity: 0.08;
+    z-index: -1;
+    pointer-events: none;
+}
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-bottom: 25px;
+}
+.info-item {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    background: #f8fafc;
+    padding: 12px 15px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    gap: 10px;
+}
+.info-label {
+    font-size: 11px;
+    color: #64748b;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.info-value {
+    font-size: 14px;
+    color: #0f172a;
+    font-weight: 600;
+    text-align: right;
+}
+.patient-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    background: #00a39d;
+    color: white;
+    padding: 15px 20px;
+    border-radius: 10px;
+}
+.patient-bar .name {
+    font-size: 22px;
+    font-weight: 700;
+}
+.patient-bar .id {
+    font-size: 14px;
+    font-weight: 600;
+    font-family: monospace;
+}
+.prescription-section h4 {
+    font-size: 18px;
+    color: #0b2b52;
+    margin: 0 0 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 10px;
+}
+.notes-area {
+    min-height: 300px;
+}
+.signature-area {
+    margin-top: 40px;
+    padding-top: 8px;
+    border-top: 1px solid #94a3b8;
+    text-align: right;
+    font-size: 14px;
+    font-weight: 600;
+    color: #64748b;
+    width: 250px;
+    margin-left: auto;
+}
+.ticket-footer {
+    text-align: center;
+    padding: 20px 30px;
+    background: #f8fafc;
+    border-top: 1px solid #e2e8f0;
+}
+.ticket-footer p {
+    margin: 0;
+    font-size: 14px;
+    color: #64748b;
+    font-weight: 600;
+}
+.print-time {
+    font-size: 11px !important;
+    color: #94a3b8 !important;
+    margin-top: 8px !important;
+    font-weight: 500 !important;
+}
+@page { margin: 0; }
+@media print {
+    html, body { height: 100%; margin: 0; overflow: hidden; }
+    body { background: white; padding: 1cm; box-sizing: border-box; display: block; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .ticket { box-shadow: none; border-radius: 0; padding: 0; border: none; max-width: 100%; height: 100%; display: flex; flex-direction: column; }
+    .ticket-body { flex-grow: 1; display: flex; flex-direction: column; padding: 20px 30px; }
+    .prescription-section { flex-grow: 1; display: flex; flex-direction: column; }
+    .notes-area { flex-grow: 1; min-height: 0; }
+    .signature-area { margin-top: auto; padding-top: 15px; }
+    .ticket-header, .ticket-footer { background: none; flex-shrink: 0; }
+}

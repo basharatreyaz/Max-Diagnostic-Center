@@ -1,0 +1,5 @@
+# Disable PHP execution in this directory and subdirectories
+<FilesMatch "\.(php|php[3-7]|phtml|pht|phar|sh|cgi)$">
+    SetHandler text/plain
+</FilesMatch>
+Options -Indexes

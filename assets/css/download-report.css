@@ -1,0 +1,8 @@
+body { background: var(--bg-light); padding: 50px 20px; }
+.container { max-width: 800px; background: white; padding: 40px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,.05); margin: auto; }
+h2 { color: var(--secondary); margin-bottom: 20px; }
+.report-list { list-style: none; padding: 0; }
+.report-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid var(--border); font-weight: 500; }
+.report-item:last-child { border-bottom: none; }
+.download-btn { background: var(--primary); color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; transition: 0.3s; }
+.download-btn:hover { background: var(--secondary); transform: translateY(-2px); }
