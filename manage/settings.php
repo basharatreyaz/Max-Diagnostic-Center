@@ -14,6 +14,16 @@ if (!isset($_SESSION['admin_permissions']) || ($_SESSION['admin_permissions'] !=
 
 require_once '../includes/db.php';
 
+$seo_pages = [
+    'home' => 'Home Page',
+    'about' => 'About Us',
+    'services' => 'Services',
+    'specialists' => 'Specialists',
+    'appointments' => 'Appointments',
+    'reports' => 'Reports',
+    'contact' => 'Contact Us'
+];
+
 // Check if settings table exists, if not create and seed it
 $tableCheck = $conn->query("SHOW TABLES LIKE 'settings'");
 if ($tableCheck && $tableCheck->num_rows == 0) {
@@ -30,6 +40,15 @@ if ($tableCheck && $tableCheck->num_rows == 0) {
     $conn->query("INSERT INTO settings (setting_key, setting_value) VALUES ('top_bar_address', 'Hyderbeigh, Baramulla, Jammu & Kashmir'), ('top_bar_timing', 'Mon - Sat: 8:00 AM - 8:00 PM | Sun: 9:00 AM - 2:00 PM'), ('top_bar_phone', '+91 7051674869'), ('top_bar_email', 'info@maxdiagnostic.com')");
     $conn->query("INSERT INTO settings (setting_key, setting_value) VALUES ('social_facebook', '#'), ('social_instagram', '#'), ('social_whatsapp', '#')");
     $conn->query("INSERT INTO settings (setting_key, setting_value) VALUES ('whatsapp_number', '917051674869')");
+    $conn->query("INSERT INTO settings (setting_key, setting_value) VALUES ('meta_title', 'Max Diagnostic Center'), ('meta_description', 'Comprehensive Diagnostic & Healthcare Solutions')");
+    
+    $seo_inserts = [];
+    foreach ($seo_pages as $key => $label) {
+        $seo_inserts[] = "('meta_title_$key', 'Max Diagnostic Center | $label')";
+        $seo_inserts[] = "('meta_desc_$key', 'Comprehensive Diagnostic & Healthcare Solutions - $label')";
+    }
+    $conn->query("INSERT INTO settings (setting_key, setting_value) VALUES " . implode(", ", $seo_inserts));
+
     clearSettingsCache();
 } else {
     // Ensure column can hold large scripts
@@ -46,6 +65,15 @@ if ($tableCheck && $tableCheck->num_rows == 0) {
     $conn->query("INSERT IGNORE INTO settings (setting_key, setting_value) VALUES ('top_bar_address', 'Hyderbeigh, Baramulla, Jammu & Kashmir'), ('top_bar_timing', 'Mon - Sat: 8:00 AM - 8:00 PM | Sun: 9:00 AM - 2:00 PM'), ('top_bar_phone', '+91 7051674869'), ('top_bar_email', 'info@maxdiagnostic.com')");
     $conn->query("INSERT IGNORE INTO settings (setting_key, setting_value) VALUES ('social_facebook', '#'), ('social_instagram', '#'), ('social_whatsapp', '#')");
     $conn->query("INSERT IGNORE INTO settings (setting_key, setting_value) VALUES ('whatsapp_number', '917051674869')");
+    $conn->query("INSERT IGNORE INTO settings (setting_key, setting_value) VALUES ('meta_title', 'Max Diagnostic Center'), ('meta_description', 'Comprehensive Diagnostic & Healthcare Solutions')");
+    
+    $seo_inserts = [];
+    foreach ($seo_pages as $key => $label) {
+        $seo_inserts[] = "('meta_title_$key', 'Max Diagnostic Center | $label')";
+        $seo_inserts[] = "('meta_desc_$key', 'Comprehensive Diagnostic & Healthcare Solutions - $label')";
+    }
+    $conn->query("INSERT IGNORE INTO settings (setting_key, setting_value) VALUES " . implode(", ", $seo_inserts));
+
     clearSettingsCache();
 }
 
@@ -95,6 +123,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_settings'])) {
 
     $whatsapp_number = $conn->real_escape_string($_POST['whatsapp_number']);
     $conn->query("INSERT INTO settings (setting_key, setting_value) VALUES ('whatsapp_number', '$whatsapp_number') ON DUPLICATE KEY UPDATE setting_value = '$whatsapp_number'");
+
+    $meta_title = $conn->real_escape_string($_POST['meta_title']);
+    $meta_description = $conn->real_escape_string($_POST['meta_description']);
+    $conn->query("INSERT INTO settings (setting_key, setting_value) VALUES ('meta_title', '$meta_title') ON DUPLICATE KEY UPDATE setting_value = '$meta_title'");
+    $conn->query("INSERT INTO settings (setting_key, setting_value) VALUES ('meta_description', '$meta_description') ON DUPLICATE KEY UPDATE setting_value = '$meta_description'");
+
+    foreach ($seo_pages as $key => $label) {
+        if (isset($_POST["meta_title_$key"])) {
+            $m_title = $conn->real_escape_string($_POST["meta_title_$key"]);
+            $conn->query("INSERT INTO settings (setting_key, setting_value) VALUES ('meta_title_$key', '$m_title') ON DUPLICATE KEY UPDATE setting_value = '$m_title'");
+        }
+        if (isset($_POST["meta_desc_$key"])) {
+            $m_desc = $conn->real_escape_string($_POST["meta_desc_$key"]);
+            $conn->query("INSERT INTO settings (setting_key, setting_value) VALUES ('meta_desc_$key', '$m_desc') ON DUPLICATE KEY UPDATE setting_value = '$m_desc'");
+        }
+    }
 
     // Appointment Form Settings
     $appointment_settings = [
@@ -193,6 +237,9 @@ $social_whatsapp = $settings['social_whatsapp'] ?? '#';
 
 $whatsapp_number = $settings['whatsapp_number'] ?? '917051674869';
 
+$meta_title = $settings['meta_title'] ?? 'Max Diagnostic Center';
+$meta_description = $settings['meta_description'] ?? 'Comprehensive Diagnostic & Healthcare Solutions';
+
 $settings['appointment_show_age'] = $settings['appointment_show_age'] ?? 0;
 $settings['appointment_show_gender'] = $settings['appointment_show_gender'] ?? 0;
 $settings['appointment_show_address'] = $settings['appointment_show_address'] ?? 0;
@@ -216,6 +263,48 @@ if (isset($_SESSION['setting_msg'])) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/admin-settings.css">
     <link rel="stylesheet" href="../assets/css/admin-settings-custom.css">
+    <style>
+        .settings-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 10px;
+            overflow-x: auto;
+        }
+        .tab-btn {
+            background: none;
+            border: none;
+            padding: 10px 20px;
+            font-size: 15px;
+            font-weight: 600;
+            color: #64748b;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: 0.3s;
+            white-space: nowrap;
+            font-family: inherit;
+        }
+        .tab-btn:hover {
+            background: #f1f5f9;
+            color: var(--primary);
+        }
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        /* Make non-code textareas use the standard font instead of monospace */
+        #tab-seo textarea, #tab-app textarea {
+            font-family: 'Outfit', sans-serif;
+            font-size: 15px;
+        }
+    </style>
 </head>
 <body>
     <?php include 'admin_sidebar.php'; ?>
@@ -229,6 +318,15 @@ if (isset($_SESSION['setting_msg'])) {
             <?php endif; ?>
             <form method="POST" enctype="multipart/form-data">
                 <input type="hidden" name="csrf_token" value="<?= generateCsrfToken() ?>">
+                
+                <div class="settings-tabs">
+                    <button type="button" class="tab-btn active" onclick="openTab('tab-general', this)"><i class="fas fa-home"></i> General & Branding</button>
+                    <button type="button" class="tab-btn" onclick="openTab('tab-seo', this)"><i class="fas fa-globe"></i> SEO</button>
+                    <button type="button" class="tab-btn" onclick="openTab('tab-app', this)"><i class="fas fa-cogs"></i> App Settings</button>
+                    <button type="button" class="tab-btn" onclick="openTab('tab-advanced', this)"><i class="fas fa-code"></i> Advanced</button>
+                </div>
+
+                <div id="tab-general" class="tab-content active">
                 <div class="card">
                     <h3><i class="fas fa-image"></i> Branding</h3>
                     <div class="form-grid">
@@ -254,24 +352,70 @@ if (isset($_SESSION['setting_msg'])) {
                         </div>
                     </div>
                 </div>
+                    <div class="card">
+                        <h3><i class="fas fa-bars"></i> Top Bar Settings</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="top_bar_address">Address</label>
+                                <input type="text" id="top_bar_address" name="top_bar_address" value="<?= htmlspecialchars($top_bar_address) ?>">
+                            </div>
+                            <div class="form-group">
+                                <label for="top_bar_timing">Timing</label>
+                                <input type="text" id="top_bar_timing" name="top_bar_timing" value="<?= htmlspecialchars($top_bar_timing) ?>">
+                            </div>
+                            <div class="form-group">
+                                <label for="top_bar_phone">Phone</label>
+                                <input type="text" id="top_bar_phone" name="top_bar_phone" value="<?= htmlspecialchars($top_bar_phone) ?>">
+                            </div>
+                            <div class="form-group">
+                                <label for="top_bar_email">Email</label>
+                                <input type="email" id="top_bar_email" name="top_bar_email" value="<?= htmlspecialchars($top_bar_email) ?>">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3><i class="fas fa-share-alt"></i> Social Media Links</h3>
+                        <div class="form-grid">
+                            <div class="form-group"><label for="social_facebook">Facebook URL</label><input type="text" id="social_facebook" name="social_facebook" value="<?= htmlspecialchars($social_facebook) ?>"></div>
+                            <div class="form-group"><label for="social_instagram">Instagram URL</label><input type="text" id="social_instagram" name="social_instagram" value="<?= htmlspecialchars($social_instagram) ?>"></div>
+                            <div class="form-group"><label for="social_whatsapp">WhatsApp URL</label><input type="text" id="social_whatsapp" name="social_whatsapp" value="<?= htmlspecialchars($social_whatsapp) ?>"></div>
+                            <div class="form-group">
+                                <label for="whatsapp_number">WhatsApp Chat Number (Mobile Bottom Bar)</label>
+                                <input type="text" id="whatsapp_number" name="whatsapp_number" placeholder="e.g. 917051674869" value="<?= htmlspecialchars($whatsapp_number) ?>">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="tab-seo" class="tab-content">
+                <div class="card">
+                    <h3><i class="fas fa-globe"></i> SEO & Meta Data</h3>
+                    <div class="form-group" style="background: #f8fafc; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                        <h4 style="margin-top: 0; color: var(--secondary); margin-bottom: 15px;">Global Defaults</h4>
+                        <div class="form-group" style="margin-bottom: 15px;">
+                            <label for="meta_title">Global Meta Title</label>
+                            <input type="text" id="meta_title" name="meta_title" value="<?= htmlspecialchars($meta_title) ?>">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label for="meta_description">Global Meta Description</label>
+                            <textarea id="meta_description" name="meta_description" rows="3"><?= htmlspecialchars($meta_description) ?></textarea>
+                        </div>
+                    </div>
+                    <h4 style="color: var(--secondary); margin-bottom: 15px; padding-top: 10px; border-top: 1px solid #e2e8f0;">Page-Specific SEO</h4>
+                    <?php foreach ($seo_pages as $key => $label): ?>
+                        <div class="form-group" style="background: #ffffff; border: 1px solid #e2e8f0; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                            <label style="color: var(--primary); font-size: 16px; margin-bottom: 10px; display: block;"><i class="fas fa-file-alt"></i> <?= $label ?> Page</label>
+                            <input type="text" name="meta_title_<?= $key ?>" placeholder="Meta Title for <?= $label ?>" value="<?= htmlspecialchars($settings['meta_title_' . $key] ?? '') ?>" style="margin-bottom: 10px;">
+                            <textarea name="meta_desc_<?= $key ?>" placeholder="Meta Description for <?= $label ?>" rows="2"><?= htmlspecialchars($settings['meta_desc_' . $key] ?? '') ?></textarea>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+                </div>
+
+                <div id="tab-app" class="tab-content">
                 <div class="card">
                     <h3><i class="fas fa-sliders-h"></i> Display Preferences</h3>
                     <div class="form-group"><label>Items Per Page (Pagination Limit)</label><input type="number" name="items_per_page" min="1" max="100" value="<?= $current_limit ?>" required></div>
-                </div>
-                <div class="card">
-                    <h3><i class="fas fa-code"></i> Code Injection</h3>
-                    <div class="form-group">
-                        <label for="header_scripts">Header Scripts (before &lt;/head&gt;)</label>
-                        <textarea id="header_scripts" name="header_scripts" rows="5" placeholder="e.g., <script>...</script> or <style>...</style>"><?= htmlspecialchars($header_scripts) ?></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="body_start_scripts">Body Start Scripts (after &lt;body&gt;)</label>
-                        <textarea id="body_start_scripts" name="body_start_scripts" rows="5" placeholder="e.g., Google Tag Manager noscript snippet"><?= htmlspecialchars($body_start_scripts) ?></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="footer_scripts">Footer Scripts (before &lt;/body&gt;)</label>
-                        <textarea id="footer_scripts" name="footer_scripts" rows="5" placeholder="e.g., Google Analytics script"><?= htmlspecialchars($footer_scripts) ?></textarea>
-                    </div>
                 </div>
                 <div class="card">
                     <h3><i class="fas fa-ticket-alt"></i> Ticket Settings</h3>
@@ -295,48 +439,6 @@ if (isset($_SESSION['setting_msg'])) {
                     </div>
                 </div>
                 <div class="card">
-                    <h3><i class="fas fa-bars"></i> Top Bar Settings</h3>
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label for="top_bar_address">Address</label>
-                            <input type="text" id="top_bar_address" name="top_bar_address" value="<?= htmlspecialchars($top_bar_address) ?>">
-                        </div>
-                        <div class="form-group">
-                            <label for="top_bar_timing">Timing</label>
-                            <input type="text" id="top_bar_timing" name="top_bar_timing" value="<?= htmlspecialchars($top_bar_timing) ?>">
-                        </div>
-                        <div class="form-group">
-                            <label for="top_bar_phone">Phone</label>
-                            <input type="text" id="top_bar_phone" name="top_bar_phone" value="<?= htmlspecialchars($top_bar_phone) ?>">
-                        </div>
-                        <div class="form-group">
-                            <label for="top_bar_email">Email</label>
-                            <input type="email" id="top_bar_email" name="top_bar_email" value="<?= htmlspecialchars($top_bar_email) ?>">
-                        </div>
-                    </div>
-                </div>
-                <div class="card">
-                    <h3><i class="fas fa-share-alt"></i> Social Media Links</h3>
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label for="social_facebook">Facebook URL</label>
-                            <input type="text" id="social_facebook" name="social_facebook" value="<?= htmlspecialchars($social_facebook) ?>">
-                        </div>
-                        <div class="form-group">
-                            <label for="social_instagram">Instagram URL</label>
-                            <input type="text" id="social_instagram" name="social_instagram" value="<?= htmlspecialchars($social_instagram) ?>">
-                        </div>
-                        <div class="form-group">
-                            <label for="social_whatsapp">WhatsApp URL</label>
-                            <input type="text" id="social_whatsapp" name="social_whatsapp" value="<?= htmlspecialchars($social_whatsapp) ?>">
-                        </div>
-                        <div class="form-group">
-                            <label for="whatsapp_number">WhatsApp Chat Number (Mobile Bottom Bar)</label>
-                            <input type="text" id="whatsapp_number" name="whatsapp_number" placeholder="e.g. 917051674869" value="<?= htmlspecialchars($whatsapp_number) ?>">
-                        </div>
-                    </div>
-                </div>
-                <div class="card">
                     <h3><i class="fas fa-calendar-alt"></i> Appointment Form Fields</h3>
                     <div class="form-group-flex">
                         <label for="show_age">Show 'Age' Field</label>
@@ -351,9 +453,37 @@ if (isset($_SESSION['setting_msg'])) {
                         <input type="checkbox" id="show_address" name="appointment_show_address" value="1" <?= ($settings['appointment_show_address'] ?? 0) ? 'checked' : '' ?>>
                     </div>
                 </div>
-                <button type="submit" name="update_settings" class="btn-primary" style="font-family: 'Outfit', sans-serif;"><i class="fas fa-save"></i> Save All Settings</button>
+                </div>
+
+                <div id="tab-advanced" class="tab-content">
+                    <div class="card">
+                        <h3><i class="fas fa-code"></i> Code Injection</h3>
+                        <div class="form-group">
+                            <label for="header_scripts">Header Scripts (before &lt;/head&gt;)</label>
+                            <textarea id="header_scripts" name="header_scripts" rows="5" placeholder="e.g., <script>...</script> or <style>...</style>"><?= htmlspecialchars($header_scripts) ?></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="body_start_scripts">Body Start Scripts (after &lt;body&gt;)</label>
+                            <textarea id="body_start_scripts" name="body_start_scripts" rows="5" placeholder="e.g., Google Tag Manager noscript snippet"><?= htmlspecialchars($body_start_scripts) ?></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="footer_scripts">Footer Scripts (before &lt;/body&gt;)</label>
+                            <textarea id="footer_scripts" name="footer_scripts" rows="5" placeholder="e.g., Google Analytics script"><?= htmlspecialchars($footer_scripts) ?></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" name="update_settings" class="btn-primary" style="font-family: 'Outfit', sans-serif; margin-top: 10px;"><i class="fas fa-save"></i> Save All Settings</button>
             </form>
         </div>
     </main>
+    <script>
+        function openTab(tabId, btn) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            btn.classList.add('active');
+        }
+    </script>
 </body>
 </html>

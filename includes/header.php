@@ -12,6 +12,12 @@ $top_bar_phone = $app_settings['top_bar_phone'] ?? '+91 7051674869';
 $top_bar_email = $app_settings['top_bar_email'] ?? 'info@maxdiagnostic.com';
 
 $favicon = isset($app_settings['favicon']) && !empty($app_settings['favicon']) ? $app_settings['favicon'] : '';
+
+$current_file = basename($_SERVER['PHP_SELF'], '.php');
+$page_key = ($current_file === 'index') ? 'home' : $current_file;
+
+$meta_title = !empty($app_settings["meta_title_{$page_key}"]) ? $app_settings["meta_title_{$page_key}"] : ($app_settings['meta_title'] ?? 'Max Diagnostic Center | Hyderbeigh');
+$meta_description = !empty($app_settings["meta_desc_{$page_key}"]) ? $app_settings["meta_desc_{$page_key}"] : ($app_settings['meta_description'] ?? 'Comprehensive Diagnostic & Healthcare Solutions');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -19,7 +25,9 @@ $favicon = isset($app_settings['favicon']) && !empty($app_settings['favicon']) ?
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
     <meta name="format-detection" content="telephone=no">
-    <title>Max Diagnostic Center | Hyderbeigh</title>
+    
+    <title><?= htmlspecialchars($meta_title) ?></title>
+    <meta name="description" content="<?= htmlspecialchars($meta_description) ?>">
 
     <?php if ($favicon): ?>
         <link rel="icon" href="<?= htmlspecialchars($favicon) ?>">
