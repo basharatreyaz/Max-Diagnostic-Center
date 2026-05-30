@@ -21,4 +21,4 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           protocol: ftp
           port: 21
-          server-dir: maxd.fwh.is/hddocs
+          server-dir: maxd.fwh.is/htdocs/
