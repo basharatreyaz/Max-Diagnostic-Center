@@ -1,0 +1,207 @@
+/* Responsive Admin Styles */
+
+/* Mobile Header (Hidden on Desktop) */
+.mobile-admin-header {
+    display: none;
+    background: transparent;
+    padding: 15px 20px;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: none;
+    position: sticky;
+    top: 0;
+    z-index: 998;
+}
+
+.mobile-admin-header img {
+    max-height: 40px;
+}
+
+.mobile-admin-header .mobile-menu-btn {
+    background: none;
+    border: none;
+    color: var(--secondary, #0b2b52);
+    font-size: 24px;
+    cursor: pointer;
+}
+
+/* Base Mobile Styles */
+@media (max-width: 992px) {
+    .dashboard-grid, .form-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
+
+@media (max-width: 768px) {
+    body {
+        flex-direction: column !important;
+    }
+
+    .mobile-admin-header {
+        display: flex;
+    }
+    
+    .sidebar {
+        transform: translateX(-100%);
+        position: fixed !important;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        z-index: 1000;
+        width: 260px !important;
+        transition: transform 0.3s ease;
+        box-shadow: 5px 0 15px rgba(0,0,0,0.1);
+    }
+    
+    .sidebar.mobile-open {
+        transform: translateX(0);
+    }
+    
+    /* Overcome the desktop sidebar-collapsed settings on mobile */
+    body.sidebar-collapsed .sidebar { width: 260px !important; }
+    body.sidebar-collapsed .sidebar-header { justify-content: space-between !important; padding: 0 20px 20px !important; }
+    body.sidebar-collapsed .sidebar-logo { display: flex !important; }
+    body.sidebar-collapsed .sidebar-nav a { padding: 14px 20px !important; justify-content: flex-start !important; }
+    body.sidebar-collapsed .nav-text { display: inline-block !important; }
+    body.sidebar-collapsed .sidebar-badge { display: inline-block !important; }
+    body.sidebar-collapsed .sidebar-nav { display: flex !important; }
+    
+    /* Hide desktop menu collapse toggle inside the mobile sidebar */
+    #toggleSidebarBtn {
+        display: none !important;
+    }
+    
+    .main-content {
+        margin-left: 0 !important;
+        width: 100% !important;
+        padding: 15px !important;
+    }
+
+    .dashboard-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .form-grid, .perm-grid, .diagnostic-wrapper .form-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .admin-header {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 15px;
+    }
+
+    .admin-header .btn-primary {
+        width: 100%;
+        text-align: center;
+        justify-content: center;
+    }
+
+    .card-header {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 15px;
+    }
+    
+    .filter-form {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        gap: 10px;
+    }
+
+    .filter-input, .filter-select, .btn-filter, .btn-clear {
+        width: 100%;
+    }
+
+    /* Prevent iOS zoom by ensuring form fields are at least 16px */
+    input, select, textarea {
+        font-size: 16px !important;
+    }
+
+    /* Make Tables Card-based (One item per row) */
+    .table-responsive {
+        width: 100%;
+        overflow-x: hidden !important;
+        border: none !important;
+    }
+
+    table, thead, tbody, th, td, tr {
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    table {
+        min-width: 0 !important;
+    }
+
+    thead {
+        display: none; /* Hide column headers on mobile */
+    }
+
+    tr {
+        margin-bottom: 15px;
+        border: 1px solid var(--border, #e2e8f0);
+        border-radius: 8px;
+        padding: 10px;
+    }
+
+    td {
+        border: none !important;
+        border-bottom: 1px solid var(--border, #e2e8f0) !important;
+        padding: 12px 5px !important;
+        text-align: left !important;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+    }
+
+    td:last-child {
+        border-bottom: none !important;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+        gap: 5px;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .form-actions button, .form-actions a {
+        width: 100%;
+        text-align: center;
+        justify-content: center;
+        box-sizing: border-box;
+    }
+    
+    /* Overlay for mobile sidebar */
+    .sidebar-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.5);
+        z-index: 999;
+    }
+    
+    .sidebar-overlay.active {
+        display: block;
+    }
+}
+
+/* Login Page Responsiveness */
+@media (max-width: 576px) {
+    .login-box {
+        width: 90% !important;
+        padding: 30px 20px !important;
+        margin: 20px auto;
+        box-sizing: border-box;
+    }
+}

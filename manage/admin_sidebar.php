@@ -32,7 +32,15 @@ function has_permission($module) {
 }
 ?>
 <link rel="stylesheet" href="../assets/css/admin-sidebar.css">
+<link rel="stylesheet" href="../assets/css/admin-responsive.css">
 
+<div class="mobile-admin-header">
+    <div class="mobile-logo">
+        <img src="<?= htmlspecialchars($adminLogo) ?>" alt="Max Diagnostic Center">
+    </div>
+    <button class="mobile-menu-btn" id="mobileMenuToggle"><i class="fas fa-bars"></i></button>
+</div>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
 <aside class="sidebar" id="adminSidebar">
     <div class="sidebar-header">
         <div class="sidebar-logo">
@@ -115,6 +123,20 @@ function has_permission($module) {
         }
         if(localStorage.getItem('sidebarCollapsed') === 'true') {
             document.body.classList.add('sidebar-collapsed');
+        }
+        
+        // Mobile sidebar toggle
+        const mobileBtn = document.getElementById('mobileMenuToggle');
+        const overlay = document.getElementById('sidebarOverlay');
+        const sidebar = document.getElementById('adminSidebar');
+        
+        if (mobileBtn && overlay && sidebar) {
+            const toggleMobileMenu = () => {
+                sidebar.classList.toggle('mobile-open');
+                overlay.classList.toggle('active');
+            };
+            mobileBtn.addEventListener('click', toggleMobileMenu);
+            overlay.addEventListener('click', toggleMobileMenu);
         }
     });
 </script>

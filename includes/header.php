@@ -99,7 +99,7 @@ $top_bar_email = $app_settings['top_bar_email'] ?? 'info@maxdiagnostic.com';
 
             <div class="logo">
 
-                <a href="/max"><img class="logo-image" src="<?= htmlspecialchars($frontend_logo_v) ?>" alt="Max Diagnostic Center"></a>
+                <a href="index.php"><img class="logo-image" src="<?= htmlspecialchars($frontend_logo_v) ?>" alt="Max Diagnostic Center"></a>
 
             </div>
 

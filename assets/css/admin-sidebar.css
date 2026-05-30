@@ -24,22 +24,6 @@ body.sidebar-collapsed .sidebar-nav a { padding: 14px 0; justify-content: center
 body.sidebar-collapsed .nav-text { display: none; }
 body.sidebar-collapsed .sidebar-badge { display: none; }
 
-@media(max-width: 768px) {
-    body { flex-direction: column; }
-    .sidebar { width: 100%; height: auto; position: static; border-right: none; border-bottom: 1px solid var(--border); padding: 15px 0; flex-direction: column; }
-    .sidebar-header { padding: 0 20px; border-bottom: none; margin-bottom: 0; }
-    .sidebar-nav { flex-direction: row; flex-wrap: wrap; border-top: 1px solid var(--border); margin-top: 15px; padding-top: 10px; display: flex; }
-    .sidebar-nav li { flex: 1 1 auto; text-align: center; }
-    .sidebar-nav a { justify-content: center; padding: 10px; gap: 8px; }
-    .sidebar-nav .logout-item { border-top: none; padding-top: 0; }
-    
-    body.sidebar-collapsed .sidebar { width: 100%; }
-    body.sidebar-collapsed .sidebar-nav { display: none; }
-    body.sidebar-collapsed .sidebar-header { justify-content: space-between; padding: 0 20px; }
-    body.sidebar-collapsed .sidebar-logo { display: flex; }
-    .main-content { padding: 20px; }
-}
-
 /* Dark Mode Styles */
 body.dark-mode {
     --primary: #00a39d;

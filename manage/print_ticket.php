@@ -50,6 +50,7 @@ $admin_logo_v = $admin_logo . '?v=' . time(); // Cache-buster
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Print Ticket - <?= htmlspecialchars($appointment['patient_name']) ?></title>
     <link href="https://fonts.bunny.net/css?family=outfit:400,600,700" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
