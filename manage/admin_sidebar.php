@@ -73,7 +73,8 @@ function has_permission($module) {
         <?php if (isset($_SESSION['admin_role']) && $_SESSION['admin_role'] === 'superadmin'): ?>
             <li><a href="users.php" class="<?= $currentPage == 'users.php' ? 'active' : '' ?>"><i class="fas fa-users-cog"></i> <span class="nav-text">Manage Users</span></a></li>
         <?php endif; ?>
-            <li><a href="#" id="darkModeToggle"><i class="fas fa-moon"></i> <span class="nav-text">Dark Mode</span></a></li>
+        <li><a href="../index.php" target="_blank"><i class="fas fa-external-link-alt"></i> <span class="nav-text">View Site</span></a></li>
+        <li><a href="#" id="darkModeToggle"><i class="fas fa-moon"></i> <span class="nav-text">Dark Mode</span></a></li>
         <li class="logout-item"><a href="logout.php"><i class="fas fa-sign-out-alt"></i> <span class="nav-text">Logout</span></a></li>
     </ul>
 </aside>
