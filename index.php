@@ -380,6 +380,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['book_appointment'])) {
                         <?php if (!isset($form_settings['appointment_show_department']) || $form_settings['appointment_show_department'] == '1'): ?>
                         <select class="form-select" name="department" id="department-select" required>
                             <option value="" class="form-option">Select Department</option>
+                            <option value="Lab Test (Diagnostics)" class="form-option" <?= (isset($_GET['dept']) && strcasecmp(trim($_GET['dept']), 'Lab Test (Diagnostics)') == 0) ? 'selected' : '' ?>>Lab Test (Diagnostics)</option>
                             <?php
                             foreach ($specialtiesList as $dept) {
                                 $selected = (isset($_GET['dept']) && strcasecmp(trim($_GET['dept']), $dept) == 0) ? 'selected' : '';
@@ -394,6 +395,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['book_appointment'])) {
                         <?php if (!isset($form_settings['appointment_show_doctor']) || $form_settings['appointment_show_doctor'] == '1'): ?>
                         <select class="form-select" name="doctor" id="doctor-select" required>
                             <option value="" class="form-option">Select Doctor</option>
+                            <option class="form-option doctor-option" value="Not Required" data-department="lab test (diagnostics)" <?= (isset($_GET['dept']) && strcasecmp(trim($_GET['dept']), 'Lab Test (Diagnostics)') == 0) ? 'selected' : '' ?>>Not Required</option>
                             <?php
                             foreach ($doctorsList as $doc) {
                                 $selected = (isset($_GET['doc']) && strcasecmp(trim($_GET['doc']), trim($doc['name'])) == 0) ? 'selected' : '';

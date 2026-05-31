@@ -252,6 +252,15 @@
             deptSelect.addEventListener('change', function() {
                 filterDoctors(this.value);
                 docSelect.value = ''; // Reset doctor selection
+                
+                // Auto-select if there's only one visible option
+                let visibleOptions = [];
+                docOptions.forEach(function(opt) {
+                    if (opt.style.display !== 'none') visibleOptions.push(opt);
+                });
+                if (visibleOptions.length === 1) {
+                    docSelect.value = visibleOptions[0].value;
+                }
             });
         }
     });

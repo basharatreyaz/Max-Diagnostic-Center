@@ -265,6 +265,7 @@ if ($favResult && $favResult->num_rows > 0) {
                     <?php if (!isset($form_settings['appointment_show_department']) || $form_settings['appointment_show_department'] == '1'): ?>
                     <select name="department" id="department-select" class="form-input" required>
                         <option value="">Select Department</option>
+                        <option value="Lab Test (Diagnostics)">Lab Test (Diagnostics)</option>
                         <?php
                         $deptQuery = $conn->query("SELECT DISTINCT specialty FROM doctors WHERE specialty != '' AND is_active = 1 ORDER BY specialty ASC");
                         if ($deptQuery && $deptQuery->num_rows > 0) {
@@ -281,6 +282,7 @@ if ($favResult && $favResult->num_rows > 0) {
                     <?php if (!isset($form_settings['appointment_show_doctor']) || $form_settings['appointment_show_doctor'] == '1'): ?>
                     <select name="doctor" id="doctor-select" class="form-input" required>
                         <option value="">Select Doctor</option>
+                        <option class="doctor-option" value="Not Required" data-department="lab test (diagnostics)">Not Required</option>
                         <?php
                         $docQuery = $conn->query("SELECT name, specialty FROM doctors WHERE name != '' AND is_active = 1 ORDER BY name ASC");
                         if ($docQuery && $docQuery->num_rows > 0) {
@@ -445,6 +447,15 @@ if ($favResult && $favResult->num_rows > 0) {
                         option.style.display = 'none'; // Hide
                     }
                 });
+                
+                // Auto-select if there's only one visible option
+                let visibleOptions = [];
+                docOptions.forEach(function(opt) {
+                    if (opt.style.display !== 'none') visibleOptions.push(opt);
+                });
+                if (visibleOptions.length === 1) {
+                    docSelect.value = visibleOptions[0].value;
+                }
             });
         }
     });
