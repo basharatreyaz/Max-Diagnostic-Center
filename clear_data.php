@@ -1,5 +1,12 @@
 <?php
+session_start();
 require_once 'includes/db.php';
+
+// Ensure the user is an authenticated superadmin
+if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true || $_SESSION['admin_role'] !== 'superadmin') {
+    header("HTTP/1.1 403 Forbidden");
+    die("Access denied. Only superadmins can perform this action.");
+}
 
 // Warning: This script will remove ALL data from the database tables!
 

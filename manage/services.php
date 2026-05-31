@@ -1,5 +1,6 @@
 <?php
 session_start();
+date_default_timezone_set('Asia/Kolkata');
 
 if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
     header("Location: login.php");
@@ -168,7 +169,10 @@ $favicon = $settings['favicon'] ?? '';
         <link rel="icon" href="../<?= htmlspecialchars($favicon) ?>">
     <?php endif; ?>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/admin-sidebar.css">
     <link rel="stylesheet" href="../assets/css/admin-services.css">
+    <link rel="stylesheet" href="../assets/css/admin-custom.css">
+    <link rel="stylesheet" href="../assets/css/admin-responsive.css">
 </head>
 <body>
     <?php include 'admin_sidebar.php'; ?>
@@ -184,7 +188,7 @@ $favicon = $settings['favicon'] ?? '';
         </div>
 
         <?php if (isset($service_msg)): ?>
-            <div class="success-msg">
+            <div class="success-msg success-msg-box">
                 <i class="fas fa-check-circle"></i> <?= $service_msg ?>
             </div>
         <?php endif; ?>
@@ -206,10 +210,10 @@ $favicon = $settings['favicon'] ?? '';
                 <textarea name="description" placeholder="Service Description..." rows="4" required><?= $edit_service ? htmlspecialchars($edit_service['description']) : '' ?></textarea>
                 
                 <div class="form-actions">
-                    <button type="submit" name="<?= $edit_service ? 'update_service' : 'add_service' ?>" class="btn-primary" style="font-family: 'Outfit', sans-serif;">
+                    <button type="submit" name="<?= $edit_service ? 'update_service' : 'add_service' ?>" class="btn-primary btn-font-outfit">
                         <i class="fas fa-save"></i> <?= $edit_service ? 'Update Service' : 'Save Service' ?>
                     </button>
-                    <a href="services.php" style="background: #f1f5f9; color: #64748b; padding: 14px 25px; border-radius: 8px; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: 0.3s; box-sizing: border-box;"><i class="fas fa-times"></i> Cancel</a>
+                    <a href="services.php" class="btn-cancel-link"><i class="fas fa-times"></i> Cancel</a>
                 </div>
             </form>
         </div>

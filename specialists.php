@@ -7,20 +7,20 @@ include 'includes/header.php';
 <!-- ==========================
      PAGE HEADER
 =========================== -->
-<section class="page-header" style="background: var(--primary); padding: 60px 0; text-align: center; color: white;">
+<section class="page-header specialists-page-header">
     <div class="container">
-        <h1 style="margin: 0; font-size: 36px;">Our Specialists</h1>
-        <p style="margin-top: 10px; font-size: 18px; opacity: 0.9;">Expert Care from Top Medical Professionals</p>
+        <h1>Our Specialists</h1>
+        <p>Expert Care from Top Medical Professionals</p>
     </div>
 </section>
 
 <!-- ==========================
      ABOUT OUR TEAM
 =========================== -->
-<section class="about-team" style="padding: 80px 0 20px; text-align: center;">
-    <div class="container" style="max-width: 800px; margin: auto;">
-        <h2 style="color: var(--secondary); margin-bottom: 20px; font-size: 36px;">Dedicated to Your Health</h2>
-        <p style="color: var(--text-muted); font-size: 18px; line-height: 1.8;">
+<section class="about-team">
+    <div class="container about-team-container">
+        <h2 class="about-team-title">Dedicated to Your Health</h2>
+        <p class="about-team-text">
             At Max Diagnostic Center, we pride ourselves on housing a distinguished panel of highly qualified and experienced medical professionals. Our specialists bring decades of combined expertise from premier medical institutions to provide you with accurate diagnoses, compassionate care, and advanced treatment plans.
         </p>
     </div>
@@ -29,7 +29,7 @@ include 'includes/header.php';
 <!-- ==========================
      OUR SPECIALISTS
 =========================== -->
-<section class="specialists" style="padding: 40px 0 80px;">
+<section class="specialists specialists-list-section">
     <div class="container">
         <?php
         $specialists = [];
@@ -46,10 +46,10 @@ include 'includes/header.php';
         }
         ?>
 
-        <div class="filter-container" style="text-align: center; margin-bottom: 40px; display: flex; justify-content: center;">
-            <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
-                <label for="department-filter" style="font-weight: 600; color: var(--secondary); font-size: 16px;">Filter by Specialty:</label>
-                <select id="department-filter" style="padding: 10px 15px; border: 1px solid var(--border); border-radius: 8px; font-family: 'Outfit', sans-serif; outline: none; font-size: 16px; min-width: 220px; color: var(--text-dark);">
+        <div class="filter-container">
+            <div class="filter-group">
+                <label for="department-filter" class="filter-label">Filter by Specialty:</label>
+                <select id="department-filter" class="filter-select">
                     <option value="">All Specialties</option>
                     <?php
                     if ($tableCheck && $tableCheck->num_rows > 0) {
@@ -99,11 +99,11 @@ include 'includes/header.php';
         </div>
         
         <?php if (empty($specialists)): ?>
-            <div style="text-align: center; padding: 40px; color: var(--text-muted);">
+            <div class="no-specialists-msg">
                 <h3>No specialists found.</h3>
             </div>
         <?php else: ?>
-            <div id="no-results-msg" style="display: none; text-align: center; padding: 40px; color: var(--text-muted);">
+            <div id="no-results-msg" class="no-results-msg">
                 <h3>No specialists found for this department.</h3>
             </div>
         <?php endif; ?>
@@ -113,14 +113,14 @@ include 'includes/header.php';
 <!-- ==========================
      CTA SECTION
 =========================== -->
-<section class="cta-section" style="background: var(--secondary); padding: 80px 0; text-align: center; color: white;">
+<section class="cta-section">
     <div class="container">
-        <h2 style="margin-bottom: 20px; font-size: 36px;">Ready to Consult with Our Experts?</h2>
-        <p style="font-size: 18px; margin-bottom: 35px; max-width: 600px; margin-left: auto; margin-right: auto; opacity: 0.9; line-height: 1.6;">
+        <h2 class="cta-title">Ready to Consult with Our Experts?</h2>
+        <p class="cta-text">
             Book your appointment online today to secure your preferred time slot and skip the waiting room queues. Your health is our top priority.
         </p>
-        <a href="index.php#appointment-section" class="primary-btn" style="display: inline-block; text-decoration: none; font-size: 18px; padding: 16px 35px;">
-            <i class="fas fa-calendar-check" style="margin-right: 8px;"></i> Book Appointment Now
+        <a href="index.php#appointment-section" class="primary-btn cta-btn">
+            <i class="fas fa-calendar-check btn-icon-gap"></i> Book Appointment Now
         </a>
     </div>
 </section>

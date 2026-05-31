@@ -1,0 +1,3 @@
+# Custom Error Pages
+ErrorDocument 404 /Max/404.php
+ErrorDocument 500 /Max/500.php

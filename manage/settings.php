@@ -1,5 +1,6 @@
 <?php
 session_start();
+date_default_timezone_set('Asia/Kolkata');
 
 // Ensure the user is logged in
 if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
@@ -33,10 +34,11 @@ if ($tableCheck && $tableCheck->num_rows == 0) {
     )";
     $conn->query($sql);
     
-    $conn->query("INSERT INTO settings (setting_key, setting_value) VALUES ('items_per_page', '10'), ('header_scripts', ''), ('body_start_scripts', ''), ('footer_scripts', ''), ('ticket_title', 'Appointment Token'), ('ticket_footer_text', 'Please present this token at the reception desk.'), ('ticket_phone', '+91 7051674869'), ('ticket_address', 'Opposite JK Bank, Hyderbeigh, Jammu & Kashmir 193121')");
+    $conn->query("INSERT INTO settings (setting_key, setting_value) VALUES ('items_per_page', '10'), ('header_scripts', ''), ('body_start_scripts', ''), ('footer_scripts', ''), ('ticket_title', 'Appointment Token'), ('ticket_footer_text', ''), ('ticket_phone', '+91 7051674869'), ('ticket_address', 'Opposite JK Bank, Hyderbeigh, Jammu & Kashmir 193121'), ('ticket_qr_link', '')");
     
     // Default appointment form settings
     $conn->query("INSERT INTO settings (setting_key, setting_value) VALUES ('appointment_show_age', '1'), ('appointment_show_gender', '1'), ('appointment_show_address', '0')");
+    $conn->query("INSERT INTO settings (setting_key, setting_value) VALUES ('appointment_show_department', '1'), ('appointment_show_doctor', '1')");
     $conn->query("INSERT INTO settings (setting_key, setting_value) VALUES ('top_bar_address', 'Hyderbeigh, Baramulla, Jammu & Kashmir'), ('top_bar_timing', 'Mon - Sat: 8:00 AM - 8:00 PM | Sun: 9:00 AM - 2:00 PM'), ('top_bar_phone', '+91 7051674869'), ('top_bar_email', 'info@maxdiagnostic.com')");
     $conn->query("INSERT INTO settings (setting_key, setting_value) VALUES ('social_facebook', '#'), ('social_instagram', '#'), ('social_whatsapp', '#')");
     $conn->query("INSERT INTO settings (setting_key, setting_value) VALUES ('whatsapp_number', '917051674869')");
@@ -59,9 +61,10 @@ if ($tableCheck && $tableCheck->num_rows == 0) {
             $conn->query("ALTER TABLE settings MODIFY COLUMN setting_value TEXT");
         }
     }
-    $conn->query("INSERT IGNORE INTO settings (setting_key, setting_value) VALUES ('ticket_title', 'Appointment Token'), ('ticket_footer_text', 'Please present this token at the reception desk.'), ('ticket_phone', '+91 7051674869'), ('ticket_address', 'Opposite JK Bank, Hyderbeigh, Jammu & Kashmir 193121')");
+    $conn->query("INSERT IGNORE INTO settings (setting_key, setting_value) VALUES ('ticket_title', 'Appointment Token'), ('ticket_footer_text', ''), ('ticket_phone', '+91 7051674869'), ('ticket_address', 'Opposite JK Bank, Hyderbeigh, Jammu & Kashmir 193121'), ('ticket_qr_link', '')");
     // Ensure appointment settings exist
     $conn->query("INSERT IGNORE INTO settings (setting_key, setting_value) VALUES ('appointment_show_age', '1'), ('appointment_show_gender', '1'), ('appointment_show_address', '0')");
+    $conn->query("INSERT IGNORE INTO settings (setting_key, setting_value) VALUES ('appointment_show_department', '1'), ('appointment_show_doctor', '1')");
     $conn->query("INSERT IGNORE INTO settings (setting_key, setting_value) VALUES ('top_bar_address', 'Hyderbeigh, Baramulla, Jammu & Kashmir'), ('top_bar_timing', 'Mon - Sat: 8:00 AM - 8:00 PM | Sun: 9:00 AM - 2:00 PM'), ('top_bar_phone', '+91 7051674869'), ('top_bar_email', 'info@maxdiagnostic.com')");
     $conn->query("INSERT IGNORE INTO settings (setting_key, setting_value) VALUES ('social_facebook', '#'), ('social_instagram', '#'), ('social_whatsapp', '#')");
     $conn->query("INSERT IGNORE INTO settings (setting_key, setting_value) VALUES ('whatsapp_number', '917051674869')");
@@ -97,11 +100,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_settings'])) {
     $ticket_footer_text = $conn->real_escape_string($_POST['ticket_footer_text']);
     $ticket_phone = $conn->real_escape_string($_POST['ticket_phone']);
     $ticket_address = $conn->real_escape_string($_POST['ticket_address']);
+    $ticket_qr_link = $conn->real_escape_string($_POST['ticket_qr_link']);
     
     $conn->query("INSERT INTO settings (setting_key, setting_value) VALUES ('ticket_title', '$ticket_title') ON DUPLICATE KEY UPDATE setting_value = '$ticket_title'");
     $conn->query("INSERT INTO settings (setting_key, setting_value) VALUES ('ticket_footer_text', '$ticket_footer_text') ON DUPLICATE KEY UPDATE setting_value = '$ticket_footer_text'");
     $conn->query("INSERT INTO settings (setting_key, setting_value) VALUES ('ticket_phone', '$ticket_phone') ON DUPLICATE KEY UPDATE setting_value = '$ticket_phone'");
     $conn->query("INSERT INTO settings (setting_key, setting_value) VALUES ('ticket_address', '$ticket_address') ON DUPLICATE KEY UPDATE setting_value = '$ticket_address'");
+    $conn->query("INSERT INTO settings (setting_key, setting_value) VALUES ('ticket_qr_link', '$ticket_qr_link') ON DUPLICATE KEY UPDATE setting_value = '$ticket_qr_link'");
 
     $top_bar_address = $conn->real_escape_string($_POST['top_bar_address']);
     $top_bar_timing = $conn->real_escape_string($_POST['top_bar_timing']);
@@ -145,6 +150,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_settings'])) {
         'appointment_show_age' => isset($_POST['appointment_show_age']) ? 1 : 0,
         'appointment_show_gender' => isset($_POST['appointment_show_gender']) ? 1 : 0,
         'appointment_show_address' => isset($_POST['appointment_show_address']) ? 1 : 0,
+        'appointment_show_department' => isset($_POST['appointment_show_department']) ? 1 : 0,
+        'appointment_show_doctor' => isset($_POST['appointment_show_doctor']) ? 1 : 0,
     ];
     foreach ($appointment_settings as $key => $value) {
         $value_esc = $conn->real_escape_string($value);
@@ -222,9 +229,10 @@ $header_scripts = $settings['header_scripts'] ?? '';
 $body_start_scripts = $settings['body_start_scripts'] ?? '';
 $footer_scripts = $settings['footer_scripts'] ?? '';
 $ticket_title = $settings['ticket_title'] ?? 'Appointment Token';
-$ticket_footer_text = $settings['ticket_footer_text'] ?? 'Please present this token at the reception desk.';
+$ticket_footer_text = $settings['ticket_footer_text'] ?? '';
 $ticket_phone = $settings['ticket_phone'] ?? '+91 7051674869';
 $ticket_address = $settings['ticket_address'] ?? 'Opposite JK Bank, Hyderbeigh, Jammu & Kashmir 193121';
+$ticket_qr_link = $settings['ticket_qr_link'] ?? '';
 
 $top_bar_address = $settings['top_bar_address'] ?? 'Hyderbeigh, Baramulla, Jammu & Kashmir';
 $top_bar_timing = $settings['top_bar_timing'] ?? 'Mon - Sat: 8:00 AM - 8:00 PM | Sun: 9:00 AM - 2:00 PM';
@@ -243,6 +251,8 @@ $meta_description = $settings['meta_description'] ?? 'Comprehensive Diagnostic &
 $settings['appointment_show_age'] = $settings['appointment_show_age'] ?? 0;
 $settings['appointment_show_gender'] = $settings['appointment_show_gender'] ?? 0;
 $settings['appointment_show_address'] = $settings['appointment_show_address'] ?? 0;
+$settings['appointment_show_department'] = $settings['appointment_show_department'] ?? 1;
+$settings['appointment_show_doctor'] = $settings['appointment_show_doctor'] ?? 1;
 
 $setting_msg = '';
 if (isset($_SESSION['setting_msg'])) {
@@ -261,50 +271,10 @@ if (isset($_SESSION['setting_msg'])) {
         <link rel="icon" href="../<?= htmlspecialchars($settings['favicon']) ?>">
     <?php endif; ?>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/admin-sidebar.css">
     <link rel="stylesheet" href="../assets/css/admin-settings.css">
-    <link rel="stylesheet" href="../assets/css/admin-settings-custom.css">
-    <style>
-        .settings-tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            border-bottom: 1px solid #e2e8f0;
-            padding-bottom: 10px;
-            overflow-x: auto;
-        }
-        .tab-btn {
-            background: none;
-            border: none;
-            padding: 10px 20px;
-            font-size: 15px;
-            font-weight: 600;
-            color: #64748b;
-            cursor: pointer;
-            border-radius: 8px;
-            transition: 0.3s;
-            white-space: nowrap;
-            font-family: inherit;
-        }
-        .tab-btn:hover {
-            background: #f1f5f9;
-            color: var(--primary);
-        }
-        .tab-btn.active {
-            background: var(--primary);
-            color: white;
-        }
-        .tab-content {
-            display: none;
-        }
-        .tab-content.active {
-            display: block;
-        }
-        /* Make non-code textareas use the standard font instead of monospace */
-        #tab-seo textarea, #tab-app textarea {
-            font-family: 'Outfit', sans-serif;
-            font-size: 15px;
-        }
-    </style>
+    <link rel="stylesheet" href="../assets/css/admin-custom.css">
+    <link rel="stylesheet" href="../assets/css/admin-responsive.css">
 </head>
 <body>
     <?php include 'admin_sidebar.php'; ?>
@@ -333,8 +303,8 @@ if (isset($_SESSION['setting_msg'])) {
                         <div class="form-group">
                             <label for="admin_logo">Admin Panel Logo</label>
                             <?php if (!empty($settings['admin_logo'])): ?>
-                                <div style="margin-bottom: 10px;">
-                                    <img src="../<?= htmlspecialchars($settings['admin_logo']) ?>" alt="Current Logo" style="max-height: 50px;">
+                                <div class="settings-logo-preview">
+                                    <img src="../<?= htmlspecialchars($settings['admin_logo']) ?>" alt="Current Logo" class="settings-logo-img">
                                 </div>
                             <?php endif; ?>
                             <input type="file" id="admin_logo" name="admin_logo" accept="image/*">
@@ -343,8 +313,8 @@ if (isset($_SESSION['setting_msg'])) {
                         <div class="form-group">
                             <label for="favicon">Website Favicon</label>
                             <?php if (!empty($settings['favicon'])): ?>
-                                <div style="margin-bottom: 10px;">
-                                    <img src="../<?= htmlspecialchars($settings['favicon']) ?>" alt="Current Favicon" style="max-height: 32px; border: 1px solid #ddd; padding: 2px;">
+                                <div class="settings-logo-preview">
+                                    <img src="../<?= htmlspecialchars($settings['favicon']) ?>" alt="Current Favicon" class="settings-favicon-img">
                                 </div>
                             <?php endif; ?>
                             <input type="file" id="favicon" name="favicon" accept=".ico,.png,.jpg,.jpeg,.gif,.webp">
@@ -390,22 +360,22 @@ if (isset($_SESSION['setting_msg'])) {
                 <div id="tab-seo" class="tab-content">
                 <div class="card">
                     <h3><i class="fas fa-globe"></i> SEO & Meta Data</h3>
-                    <div class="form-group" style="background: #f8fafc; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
-                        <h4 style="margin-top: 0; color: var(--secondary); margin-bottom: 15px;">Global Defaults</h4>
-                        <div class="form-group" style="margin-bottom: 15px;">
+                    <div class="form-group settings-global-box">
+                        <h4 class="settings-section-title">Global Defaults</h4>
+                        <div class="form-group settings-group-margin">
                             <label for="meta_title">Global Meta Title</label>
                             <input type="text" id="meta_title" name="meta_title" value="<?= htmlspecialchars($meta_title) ?>">
                         </div>
-                        <div class="form-group" style="margin-bottom: 0;">
+                        <div class="form-group settings-group-no-margin">
                             <label for="meta_description">Global Meta Description</label>
                             <textarea id="meta_description" name="meta_description" rows="3"><?= htmlspecialchars($meta_description) ?></textarea>
                         </div>
                     </div>
-                    <h4 style="color: var(--secondary); margin-bottom: 15px; padding-top: 10px; border-top: 1px solid #e2e8f0;">Page-Specific SEO</h4>
+                    <h4 class="settings-seo-header">Page-Specific SEO</h4>
                     <?php foreach ($seo_pages as $key => $label): ?>
-                        <div class="form-group" style="background: #ffffff; border: 1px solid #e2e8f0; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
-                            <label style="color: var(--primary); font-size: 16px; margin-bottom: 10px; display: block;"><i class="fas fa-file-alt"></i> <?= $label ?> Page</label>
-                            <input type="text" name="meta_title_<?= $key ?>" placeholder="Meta Title for <?= $label ?>" value="<?= htmlspecialchars($settings['meta_title_' . $key] ?? '') ?>" style="margin-bottom: 10px;">
+                        <div class="form-group settings-page-box">
+                            <label class="settings-seo-title"><i class="fas fa-file-alt"></i> <?= $label ?> Page</label>
+                            <input type="text" name="meta_title_<?= $key ?>" placeholder="Meta Title for <?= $label ?>" value="<?= htmlspecialchars($settings['meta_title_' . $key] ?? '') ?>" class="settings-seo-input">
                             <textarea name="meta_desc_<?= $key ?>" placeholder="Meta Description for <?= $label ?>" rows="2"><?= htmlspecialchars($settings['meta_desc_' . $key] ?? '') ?></textarea>
                         </div>
                     <?php endforeach; ?>
@@ -434,8 +404,12 @@ if (isset($_SESSION['setting_msg'])) {
                         <textarea id="ticket_address" name="ticket_address" rows="2"><?= htmlspecialchars($ticket_address) ?></textarea>
                     </div>
                     <div class="form-group">
+                        <label for="ticket_qr_link">QR Code Link (Optional)</label>
+                        <input type="text" id="ticket_qr_link" name="ticket_qr_link" value="<?= htmlspecialchars($ticket_qr_link) ?>" placeholder="Leave blank to use default (download-reports.php)">
+                    </div>
+                    <div class="form-group">
                         <label for="ticket_footer_text">Ticket Footer Text</label>
-                        <textarea id="ticket_footer_text" name="ticket_footer_text" rows="3" required><?= htmlspecialchars($ticket_footer_text) ?></textarea>
+                        <textarea id="ticket_footer_text" name="ticket_footer_text" rows="3"><?= htmlspecialchars($ticket_footer_text) ?></textarea>
                     </div>
                 </div>
                 <div class="card">
@@ -451,6 +425,14 @@ if (isset($_SESSION['setting_msg'])) {
                     <div class="form-group-flex">
                         <label for="show_address">Show 'Address' Field</label>
                         <input type="checkbox" id="show_address" name="appointment_show_address" value="1" <?= ($settings['appointment_show_address'] ?? 0) ? 'checked' : '' ?>>
+                    </div>
+                    <div class="form-group-flex">
+                        <label for="show_department">Show 'Department' Field</label>
+                        <input type="checkbox" id="show_department" name="appointment_show_department" value="1" <?= ($settings['appointment_show_department'] ?? 1) ? 'checked' : '' ?>>
+                    </div>
+                    <div class="form-group-flex">
+                        <label for="show_doctor">Show 'Doctor' Field</label>
+                        <input type="checkbox" id="show_doctor" name="appointment_show_doctor" value="1" <?= ($settings['appointment_show_doctor'] ?? 1) ? 'checked' : '' ?>>
                     </div>
                 </div>
                 </div>
@@ -473,7 +455,7 @@ if (isset($_SESSION['setting_msg'])) {
                     </div>
                 </div>
 
-                <button type="submit" name="update_settings" class="btn-primary" style="font-family: 'Outfit', sans-serif; margin-top: 10px;"><i class="fas fa-save"></i> Save All Settings</button>
+                <button type="submit" name="update_settings" class="btn-primary btn-font-outfit settings-save-btn"><i class="fas fa-save"></i> Save All Settings</button>
             </form>
         </div>
     </main>

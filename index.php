@@ -190,15 +190,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['book_appointment'])) {
 
                     <ul>
 
-                        <li style="padding: 8px 0;"><i class="fas fa-vial" style="color: var(--accent-orange); margin-right: 12px; width: 20px; text-align: center;"></i> Blood Tests</li>
+                        <li class="service-icon-list"><i class="fas fa-vial service-icon-list-icon service-icon-orange"></i> Blood Tests</li>
 
-                        <li style="padding: 8px 0;"><i class="fas fa-flask" style="color: var(--accent-orange); margin-right: 12px; width: 20px; text-align: center;"></i> Biochemistry</li>
+                        <li class="service-icon-list"><i class="fas fa-flask service-icon-list-icon service-icon-orange"></i> Biochemistry</li>
 
-                        <li style="padding: 8px 0;"><i class="fas fa-microscope" style="color: var(--accent-orange); margin-right: 12px; width: 20px; text-align: center;"></i> Pathology</li>
+                        <li class="service-icon-list"><i class="fas fa-microscope service-icon-list-icon service-icon-orange"></i> Pathology</li>
 
-                        <li style="padding: 8px 0;"><i class="fas fa-bacteria" style="color: var(--accent-orange); margin-right: 12px; width: 20px; text-align: center;"></i> Microbiology</li>
+                        <li class="service-icon-list"><i class="fas fa-bacteria service-icon-list-icon service-icon-orange"></i> Microbiology</li>
 
-                        <li style="padding: 8px 0;"><i class="fas fa-x-ray" style="color: var(--accent-orange); margin-right: 12px; width: 20px; text-align: center;"></i> Radiology</li>
+                        <li class="service-icon-list"><i class="fas fa-x-ray service-icon-list-icon service-icon-orange"></i> Radiology</li>
 
                     </ul>
 
@@ -218,15 +218,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['book_appointment'])) {
 
                     <ul>
 
-                        <li style="padding: 8px 0;"><i class="fas fa-stethoscope" style="color: var(--accent-green); margin-right: 12px; width: 20px; text-align: center;"></i> General Medicine</li>
+                        <li class="service-icon-list"><i class="fas fa-stethoscope service-icon-list-icon service-icon-green"></i> General Medicine</li>
 
-                        <li style="padding: 8px 0;"><i class="fas fa-heart-pulse" style="color: var(--accent-green); margin-right: 12px; width: 20px; text-align: center;"></i> Cardiology</li>
+                        <li class="service-icon-list"><i class="fas fa-heart-pulse service-icon-list-icon service-icon-green"></i> Cardiology</li>
 
-                        <li style="padding: 8px 0;"><i class="fas fa-bone" style="color: var(--accent-green); margin-right: 12px; width: 20px; text-align: center;"></i> Orthopaedics</li>
+                        <li class="service-icon-list"><i class="fas fa-bone service-icon-list-icon service-icon-green"></i> Orthopaedics</li>
 
-                        <li style="padding: 8px 0;"><i class="fas fa-child-reaching" style="color: var(--accent-green); margin-right: 12px; width: 20px; text-align: center;"></i> Paediatrics</li>
+                        <li class="service-icon-list"><i class="fas fa-child-reaching service-icon-list-icon service-icon-green"></i> Paediatrics</li>
 
-                        <li style="padding: 8px 0;"><i class="fas fa-person-pregnant" style="color: var(--accent-green); margin-right: 12px; width: 20px; text-align: center;"></i> Gynaecology</li>
+                        <li class="service-icon-list"><i class="fas fa-person-pregnant service-icon-list-icon service-icon-green"></i> Gynaecology</li>
 
                     </ul>
 
@@ -246,13 +246,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['book_appointment'])) {
 
                     <ul>
 
-                        <li style="padding: 8px 0;"><i class="fas fa-calendar-plus" style="color: var(--accent-orange); margin-right: 12px; width: 20px; text-align: center;"></i> Online Appointment</li>
+                        <li class="service-icon-list"><i class="fas fa-calendar-plus service-icon-list-icon service-icon-orange"></i> Online Appointment</li>
 
-                        <li style="padding: 8px 0;"><i class="fas fa-file-arrow-down" style="color: var(--accent-orange); margin-right: 12px; width: 20px; text-align: center;"></i> Report Downloads</li>
+                        <li class="service-icon-list"><i class="fas fa-file-arrow-down service-icon-list-icon service-icon-orange"></i> Report Downloads</li>
 
-                        <li style="padding: 8px 0;"><i class="fas fa-kit-medical" style="color: var(--accent-orange); margin-right: 12px; width: 20px; text-align: center;"></i> Health Packages</li>
+                        <li class="service-icon-list"><i class="fas fa-kit-medical service-icon-list-icon service-icon-orange"></i> Health Packages</li>
 
-                        <li style="padding: 8px 0;"><i class="fas fa-house-medical" style="color: var(--accent-orange); margin-right: 12px; width: 20px; text-align: center;"></i> Home Sample Collection</li>
+                        <li class="service-icon-list"><i class="fas fa-house-medical service-icon-list-icon service-icon-orange"></i> Home Sample Collection</li>
 
                     </ul>
 
@@ -390,15 +390,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['book_appointment'])) {
                     <ul class="appointment-list">
 
                         <li class="appointment-list-item">
-                            <i class="fas fa-bolt" style="color: white; margin-right: 8px;"></i> Easy & Quick Booking
+                            <i class="fas fa-bolt appointment-list-icon"></i> Easy & Quick Booking
                         </li>
 
                         <li class="appointment-list-item">
-                            <i class="fas fa-user-md" style="color: white; margin-right: 8px;"></i> Choose Your Preferred Doctor
+                            <i class="fas fa-user-md appointment-list-icon"></i> Choose Your Preferred Doctor
                         </li>
 
                         <li class="appointment-list-item">
-                            <i class="fas fa-check-circle" style="color: white; margin-right: 8px;"></i> Instant Confirmation
+                            <i class="fas fa-check-circle appointment-list-icon"></i> Instant Confirmation
                         </li>
 
                     </ul>
@@ -410,15 +410,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['book_appointment'])) {
             <div class="appointment-right">
 
                 <?php if (!empty($appointment_msg)): ?>
-                    <div style="background: #ecfdf5; color: #10b981; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-weight: 600; text-align: center; border: 1px solid #6ee7b7;">
-                    <div class="msg-success">
+                    <div class="appointment-msg-success-box msg-success">
                         <i class="fas fa-check-circle"></i> <?= $appointment_msg ?>
                     </div>
                 <?php endif; ?>
                 
                 <?php if (!empty($appointment_error)): ?>
-                    <div style="background: #fef2f2; color: #ef4444; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-weight: 600; text-align: center; border: 1px solid #fca5a5;">
-                    <div class="msg-error">
+                    <div class="appointment-msg-error-box msg-error">
                         <i class="fas fa-exclamation-circle"></i> <?= $appointment_error ?>
                     </div>
                 <?php endif; ?>
@@ -460,6 +458,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['book_appointment'])) {
                         natcasesort($specialtiesList);
                         ?>
 
+                        <?php if (!isset($form_settings['appointment_show_department']) || $form_settings['appointment_show_department'] == '1'): ?>
                         <select class="form-select" name="department" id="department-select" required>
                             <option value="" class="form-option">Select Department</option>
                             <?php
@@ -469,7 +468,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['book_appointment'])) {
                             }
                             ?>
                         </select>
+                        <?php else: ?>
+                            <input type="hidden" name="department" value="Not Specified">
+                        <?php endif; ?>
 
+                        <?php if (!isset($form_settings['appointment_show_doctor']) || $form_settings['appointment_show_doctor'] == '1'): ?>
                         <select class="form-select" name="doctor" id="doctor-select" required>
                             <option value="" class="form-option">Select Doctor</option>
                             <?php
@@ -479,6 +482,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['book_appointment'])) {
                             }
                             ?>
                         </select>
+                        <?php else: ?>
+                            <input type="hidden" name="doctor" value="Not Specified">
+                        <?php endif; ?>
 
                         <input class="form-input" name="appointment_date" type="date" required>
 

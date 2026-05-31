@@ -11,7 +11,6 @@
             <div class="footer-col">
 
                 <img class="footer-logo"
-                    src="<?= htmlspecialchars($frontend_logo_v ?? 'assets/images/logo.png') ?>"
                     src="<?= htmlspecialchars($frontend_logo ?? 'assets/images/logo.png') ?>"
                     alt="Max Diagnostic Center">
 
@@ -55,7 +54,7 @@
 
                 <ul class="footer-list">
 
-                    <li class="footer-item"><a class="footer-link" href="/max">Home</a></li>
+                    <li class="footer-item"><a class="footer-link" href="index.php">Home</a></li>
                     <li class="footer-item"><a class="footer-link" href="about.php">About Us</a></li>
                     <li class="footer-item"><a class="footer-link" href="services.php">Services</a></li>
                         <li class="footer-item"><a class="footer-link" href="specialists.php">Specialists</a></li>

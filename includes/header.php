@@ -33,7 +33,6 @@ $meta_description = !empty($app_settings["meta_desc_{$page_key}"]) ? $app_settin
         <link rel="icon" href="<?= htmlspecialchars($favicon) ?>">
     <?php endif; ?>
 
-    <!-- Bunny Fonts -->
     <link href="https://fonts.bunny.net/css?family=outfit:300,400,500,600,700,800" rel="stylesheet">
 
     <!-- Font Awesome -->
@@ -45,6 +44,7 @@ $meta_description = !empty($app_settings["meta_desc_{$page_key}"]) ? $app_settin
    <link rel="stylesheet" href="assets/css/footer.css">
    <link rel="stylesheet" href="assets/css/index.css">
    <link rel="stylesheet" href="assets/css/header-mobile.css">
+   <link rel="stylesheet" href="assets/css/frontend-custom.css">
    <?php
     // Header code injection
     echo $app_settings['header_scripts'] ?? '';

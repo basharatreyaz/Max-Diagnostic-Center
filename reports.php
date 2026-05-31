@@ -35,10 +35,10 @@ include 'includes/header.php';
 <!-- ==========================
      PAGE HEADER
 =========================== -->
-<section class="page-header" style="background: var(--primary); padding: 60px 0; text-align: center; color: white;">
+<section class="page-header error-page-header">
     <div class="container">
-        <h1 style="margin: 0; font-size: 36px;">Download Reports</h1>
-        <p style="margin-top: 10px; font-size: 18px; opacity: 0.9;">Access Your Diagnostic Test Results Online</p>
+        <h1>Download Reports</h1>
+        <p>Access Your Diagnostic Test Results Online</p>
     </div>
 </section>
 
@@ -107,19 +107,19 @@ include 'includes/header.php';
 </section>
 
 <?php if ($has_searched): ?>
-<section id="report-results" style="padding: 0 0 80px; background: var(--bg-light);">
-    <div class="container" style="max-width: 800px; background: white; padding: 40px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,.05); margin: auto;">
-        <h2 style="color: var(--secondary); margin-bottom: 20px;">Reports for <?= !empty($search_name) ? htmlspecialchars(ucwords($_POST['first_name'])) : htmlspecialchars($search_mobile) ?></h2>
+<section id="report-results" class="reports-results-section">
+    <div class="container reports-results-container">
+        <h2 class="reports-results-title">Reports for <?= !empty($search_name) ? htmlspecialchars(ucwords($_POST['first_name'])) : htmlspecialchars($search_mobile) ?></h2>
         <?php if (count($reports_result) === 0): ?>
-            <div style="background: #fef2f2; color: #ef4444; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-weight: 600; text-align: center; border: 1px solid #fca5a5;">
+            <div class="reports-error-msg">
                 No reports found for the provided details. Please check your spelling and try again.
             </div>
         <?php else: ?>
-        <ul style="list-style: none; padding: 0; margin: 0;">
+        <ul class="reports-list">
             <?php foreach ($reports_result as $report): ?>
-                <li style="display: flex; flex-direction: column; gap: 10px; padding: 15px; border-bottom: 1px solid var(--border); font-weight: 500;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 5px;">
-                        <span style="font-size: 14px; color: var(--text-muted);">Tracking ID: <span style="font-family: monospace; font-weight: 600; color: var(--primary);"><?= htmlspecialchars($report['tracking_id'] ?? 'N/A') ?></span> &bull; Uploaded: <?= date('d M Y, h:i A', strtotime($report['uploaded_at'])) ?></span>
+                <li class="reports-list-item">
+                    <div class="reports-item-header">
+                        <span class="reports-item-meta">Tracking ID: <span class="reports-tracking-id"><?= htmlspecialchars($report['tracking_id'] ?? 'N/A') ?></span> &bull; Uploaded: <?= date('d M Y, h:i A', strtotime($report['uploaded_at'])) ?></span>
                     </div>
                     <?php 
                     $decoded = json_decode($report['report_file'], true);
@@ -136,23 +136,23 @@ include 'includes/header.php';
                         $normalized_data[] = ['test_name' => $report['test_name'], 'files' => []];
                     }
                     ?>
-                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <div class="reports-test-list">
                         <?php foreach ($normalized_data as $test): ?>
-                            <div style="display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 12px 15px; border-radius: 8px; border: 1px solid #e2e8f0;">
-                                <strong style="color: var(--secondary); font-size: 15px;"><?= htmlspecialchars($test['test_name']) ?></strong>
+                            <div class="reports-test-item">
+                                <strong class="reports-test-name"><?= htmlspecialchars($test['test_name']) ?></strong>
                                 <?php if (!empty($test['files'])): ?>
-                                    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                                    <div class="reports-download-group">
                                         <?php foreach ($test['files'] as $idx => $file): ?>
-                                            <a href="<?= htmlspecialchars($file) ?>" class="report-download-btn" download style="padding: 8px 15px; font-size: 13px;">Download <?= count($test['files']) > 1 ? 'Part ' . ($idx + 1) : 'Report' ?></a>
+                                            <a href="<?= htmlspecialchars($file) ?>" class="btn-primary report-download-btn" download>Download <?= count($test['files']) > 1 ? 'Part ' . ($idx + 1) : 'Report' ?></a>
                                         <?php endforeach; ?>
                                     </div>
                                 <?php else: ?>
-                                    <span style="color: #ef4444; font-size: 12px; font-weight: 600; background: #fef2f2; padding: 6px 12px; border-radius: 6px; border: 1px solid #fca5a5;">Pending Upload</span>
+                                    <span class="reports-pending-badge">Pending Upload</span>
                                 <?php endif; ?>
                             </div>
                         <?php endforeach; ?>
                         <?php if (empty($normalized_data)): ?>
-                            <span style="color: #ef4444; font-size: 13px; font-weight: 600; background: #fef2f2; padding: 8px 12px; border-radius: 6px; border: 1px solid #fca5a5; display: inline-block; width: fit-content;">Report not available yet, please try later</span>
+                            <span class="reports-pending-msg">Report not available yet, please try later</span>
                         <?php endif; ?>
                     </div>
                 </li>
@@ -166,33 +166,33 @@ include 'includes/header.php';
 <!-- ==========================
      INFO SECTION
 =========================== -->
-<section class="reports-info" style="padding: 80px 0;">
+<section class="reports-info reports-info-section">
     <div class="container">
-        <div style="text-align: center; margin-bottom: 50px;">
-            <h2 style="color: var(--secondary); margin-bottom: 15px; font-size: 32px;">Secure & Fast Access</h2>
-            <p style="color: var(--text-muted); font-size: 16px; max-width: 600px; margin: auto;">We ensure your medical data is handled with the utmost privacy and security.</p>
+        <div class="reports-info-header">
+            <h2 class="reports-info-title">Secure & Fast Access</h2>
+            <p class="reports-info-desc">We ensure your medical data is handled with the utmost privacy and security.</p>
         </div>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px;">
-            <div style="background: white; padding: 30px; border-radius: 12px; text-align: center; box-shadow: 0 5px 20px rgba(0,0,0,0.05); border: 1px solid var(--border);">
-                <div style="width: 60px; height: 60px; background: #e0f2fe; color: #0284c7; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; margin: 0 auto 20px;">
+        <div class="reports-info-grid">
+            <div class="reports-info-card">
+                <div class="reports-info-icon reports-info-icon-lock">
                     <i class="fas fa-lock"></i>
                 </div>
-                <h3 style="color: var(--secondary); margin-bottom: 15px; font-size: 20px;">Secure Access</h3>
-                <p style="color: var(--text-muted); font-size: 15px; margin: 0; line-height: 1.6;">Your reports are encrypted and strictly accessible only by verifying your registered credentials.</p>
+                <h3 class="reports-info-card-title">Secure Access</h3>
+                <p class="reports-info-card-desc">Your reports are encrypted and strictly accessible only by verifying your registered credentials.</p>
             </div>
-            <div style="background: white; padding: 30px; border-radius: 12px; text-align: center; box-shadow: 0 5px 20px rgba(0,0,0,0.05); border: 1px solid var(--border);">
-                <div style="width: 60px; height: 60px; background: #ecfdf5; color: #059669; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; margin: 0 auto 20px;">
+            <div class="reports-info-card">
+                <div class="reports-info-icon reports-info-icon-bolt">
                     <i class="fas fa-bolt"></i>
                 </div>
-                <h3 style="color: var(--secondary); margin-bottom: 15px; font-size: 20px;">Instant Availability</h3>
-                <p style="color: var(--text-muted); font-size: 15px; margin: 0; line-height: 1.6;">Download your results immediately as soon as they are published by our diagnostic laboratory.</p>
+                <h3 class="reports-info-card-title">Instant Availability</h3>
+                <p class="reports-info-card-desc">Download your results immediately as soon as they are published by our diagnostic laboratory.</p>
             </div>
-            <div style="background: white; padding: 30px; border-radius: 12px; text-align: center; box-shadow: 0 5px 20px rgba(0,0,0,0.05); border: 1px solid var(--border);">
-                <div style="width: 60px; height: 60px; background: #fef3c7; color: #d97706; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; margin: 0 auto 20px;">
+            <div class="reports-info-card">
+                <div class="reports-info-icon reports-info-icon-history">
                     <i class="fas fa-history"></i>
                 </div>
-                <h3 style="color: var(--secondary); margin-bottom: 15px; font-size: 20px;">Always Available</h3>
-                <p style="color: var(--text-muted); font-size: 15px; margin: 0; line-height: 1.6;">Access your historical medical reports anytime, anywhere without needing to visit the clinic.</p>
+                <h3 class="reports-info-card-title">Always Available</h3>
+                <p class="reports-info-card-desc">Access your historical medical reports anytime, anywhere without needing to visit the clinic.</p>
             </div>
         </div>
     </div>

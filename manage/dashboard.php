@@ -1,5 +1,6 @@
 <?php
 session_start();
+date_default_timezone_set('Asia/Kolkata');
 
 // Ensure the user is logged in
 if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
@@ -54,7 +55,10 @@ if ($favResult && $favResult->num_rows > 0) {
         <link rel="icon" href="../<?= htmlspecialchars($favicon) ?>?v=<?= time() ?>">
     <?php endif; ?>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/admin-sidebar.css">
     <link rel="stylesheet" href="../assets/css/admin-dashboard.css">
+    <link rel="stylesheet" href="../assets/css/admin-custom.css">
+    <link rel="stylesheet" href="../assets/css/admin-responsive.css">
 </head>
 <body>
     <?php include 'admin_sidebar.php'; ?>
@@ -67,32 +71,32 @@ if ($favResult && $favResult->num_rows > 0) {
         </div>
         
         <div class="dashboard-grid">
-            <div class="stat-card" style="cursor: pointer;" onclick="window.location.href='doctors.php'">
-                <div class="stat-icon" style="background: #e0f2fe; color: #0284c7;"><i class="fas fa-user-md"></i></div>
+            <div class="stat-card stat-card-link" onclick="window.location.href='doctors.php'">
+                <div class="stat-icon stat-icon-blue"><i class="fas fa-user-md"></i></div>
                 <div class="stat-info"><h3 class="stat-value"><?= $doctorsCount ?></h3><span class="stat-label">Total Doctors</span></div>
             </div>
-            <div class="stat-card" style="cursor: pointer;" onclick="window.location.href='reports.php'">
-                <div class="stat-icon" style="background: #fef3c7; color: #d97706;"><i class="fas fa-file-medical"></i></div>
+            <div class="stat-card stat-card-link" onclick="window.location.href='reports.php'">
+                <div class="stat-icon stat-icon-orange"><i class="fas fa-file-medical"></i></div>
                 <div class="stat-info"><h3 class="stat-value"><?= $reportsCount ?></h3><span class="stat-label">Total Reports</span></div>
             </div>
-            <div class="stat-card" style="cursor: pointer;" onclick="window.location.href='appointments.php?from_date=&to_date='">
-                <div class="stat-icon" style="background: #ecfdf5; color: #10b981;"><i class="fas fa-calendar-check"></i></div>
+            <div class="stat-card stat-card-link" onclick="window.location.href='appointments.php?from_date=&to_date='">
+                <div class="stat-icon stat-icon-green"><i class="fas fa-calendar-check"></i></div>
                 <div class="stat-info"><h3 class="stat-value"><?= $appointmentsCount ?></h3><span class="stat-label">Total Appointments</span></div>
             </div>
-            <div class="stat-card" style="cursor: pointer;" onclick="window.location.href='appointments.php?status=Pending'">
-                <div class="stat-icon" style="background: #fef2f2; color: #ef4444;"><i class="fas fa-clock"></i></div>
+            <div class="stat-card stat-card-link" onclick="window.location.href='appointments.php?status=Pending'">
+                <div class="stat-icon stat-icon-red"><i class="fas fa-clock"></i></div>
                 <div class="stat-info"><h3 class="stat-value"><?= $pendingAppointmentsCount ?></h3><span class="stat-label">Pending Appointments</span></div>
             </div>
-            <div class="stat-card" style="cursor: pointer;" onclick="window.location.href='appointments.php?status=Confirmed'">
-                <div class="stat-icon" style="background: #e0e7ff; color: #4f46e5;"><i class="fas fa-thumbs-up"></i></div>
+            <div class="stat-card stat-card-link" onclick="window.location.href='appointments.php?status=Confirmed'">
+                <div class="stat-icon stat-icon-indigo"><i class="fas fa-thumbs-up"></i></div>
                 <div class="stat-info"><h3 class="stat-value"><?= $confirmedAppointmentsCount ?></h3><span class="stat-label">Confirmed Appointments</span></div>
             </div>
-            <div class="stat-card" style="cursor: pointer;" onclick="window.location.href='appointments.php?status=Completed'">
-                <div class="stat-icon" style="background: #dcfce7; color: #059669;"><i class="fas fa-check-double"></i></div>
+            <div class="stat-card stat-card-link" onclick="window.location.href='appointments.php?status=Completed'">
+                <div class="stat-icon stat-icon-emerald"><i class="fas fa-check-double"></i></div>
                 <div class="stat-info"><h3 class="stat-value"><?= $completedAppointmentsCount ?></h3><span class="stat-label">Completed Appointments</span></div>
             </div>
-            <div class="stat-card" style="cursor: pointer;" onclick="window.location.href='appointments.php?status=Cancelled'">
-                <div class="stat-icon" style="background: #f3f4f6; color: #4b5563;"><i class="fas fa-times-circle"></i></div>
+            <div class="stat-card stat-card-link" onclick="window.location.href='appointments.php?status=Cancelled'">
+                <div class="stat-icon stat-icon-gray"><i class="fas fa-times-circle"></i></div>
                 <div class="stat-info"><h3 class="stat-value"><?= $cancelledAppointmentsCount ?></h3><span class="stat-label">Cancelled Appointments</span></div>
             </div>
         </div>

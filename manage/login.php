@@ -1,5 +1,6 @@
 <?php
 session_start();
+date_default_timezone_set('Asia/Kolkata');
 
 // If already logged in, redirect to admin panel
 if (isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true) {

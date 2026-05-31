@@ -1,5 +1,6 @@
 <?php
 session_start();
+date_default_timezone_set('Asia/Kolkata');
 
 // Ensure the user is logged in
 if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
@@ -217,7 +218,10 @@ if ($favResult && $favResult->num_rows > 0) {
         <link rel="icon" href="../<?= htmlspecialchars($favicon) ?>?v=<?= time() ?>">
     <?php endif; ?>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
-     <link rel="stylesheet" href="../assets/css/admin-appointments.css">
+    <link rel="stylesheet" href="../assets/css/admin-sidebar.css">
+    <link rel="stylesheet" href="../assets/css/admin-appointments.css">
+    <link rel="stylesheet" href="../assets/css/admin-custom.css">
+    <link rel="stylesheet" href="../assets/css/admin-responsive.css">
 </head>
 <body>
     <?php include 'admin_sidebar.php'; ?>
@@ -258,6 +262,7 @@ if ($favResult && $favResult->num_rows > 0) {
                          <input type="text" name="address" class="form-input" placeholder="Address">
                     <?php endif; ?>
                     
+                    <?php if (!isset($form_settings['appointment_show_department']) || $form_settings['appointment_show_department'] == '1'): ?>
                     <select name="department" id="department-select" class="form-input" required>
                         <option value="">Select Department</option>
                         <?php
@@ -269,7 +274,11 @@ if ($favResult && $favResult->num_rows > 0) {
                         }
                         ?>
                     </select>
+                    <?php else: ?>
+                        <input type="hidden" name="department" value="Not Specified">
+                    <?php endif; ?>
 
+                    <?php if (!isset($form_settings['appointment_show_doctor']) || $form_settings['appointment_show_doctor'] == '1'): ?>
                     <select name="doctor" id="doctor-select" class="form-input" required>
                         <option value="">Select Doctor</option>
                         <?php
@@ -281,6 +290,9 @@ if ($favResult && $favResult->num_rows > 0) {
                         }
                         ?>
                     </select>
+                    <?php else: ?>
+                        <input type="hidden" name="doctor" value="Not Specified">
+                    <?php endif; ?>
 
                     <input type="date" name="appointment_date" class="form-input" required>
                     
@@ -292,10 +304,10 @@ if ($favResult && $favResult->num_rows > 0) {
                     </select>
                 </div>
                 <div class="form-actions">
-                    <button type="submit" name="add_appointment" class="btn-primary" style="font-family: 'Outfit', sans-serif;">
+                    <button type="submit" name="add_appointment" class="btn-primary btn-font-outfit">
                         <i class="fas fa-save"></i> Save Appointment
                     </button>
-                    <a href="appointments.php" style="background: #f1f5f9; color: #64748b; padding: 14px 25px; border-radius: 8px; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: 0.3s; box-sizing: border-box;"><i class="fas fa-times"></i> Cancel</a>
+                    <a href="appointments.php" class="btn-cancel-link"><i class="fas fa-times"></i> Cancel</a>
                 </div>
             </form>
         </div>
@@ -325,8 +337,8 @@ if ($favResult && $favResult->num_rows > 0) {
                     <input type="date" name="to_date" value="<?= isset($_GET['to_date']) ? htmlspecialchars($_GET['to_date']) : '' ?>" class="filter-select filter-date" title="To Date">
                     
                     <button type="submit" class="btn-primary btn-filter"><i class="fas fa-filter"></i> Filter</button>
-                    <button type="submit" name="export_csv" value="1" class="btn-primary" style="background: #10b981;"><i class="fas fa-file-csv"></i> Export CSV</button>
-                    <button type="submit" name="export_pdf" value="1" class="btn-primary" style="background: #ef4444;"><i class="fas fa-file-pdf"></i> Export PDF</button>
+                    <button type="submit" name="export_csv" value="1" class="btn-primary btn-export-csv"><i class="fas fa-file-csv"></i> Export CSV</button>
+                    <button type="submit" name="export_pdf" value="1" class="btn-primary btn-export-pdf"><i class="fas fa-file-pdf"></i> Export PDF</button>
                     <?php 
                     $is_filtered = (isset($_GET['search']) && trim($_GET['search']) !== '') || 
                                    (isset($_GET['status']) && trim($_GET['status']) !== '') || 
@@ -385,7 +397,7 @@ if ($favResult && $favResult->num_rows > 0) {
                                     </form>
                                 </td>
                                 <td>
-                                    <div style="display: flex; gap: 8px; align-items: center;">
+                                    <div class="action-flex">
                                         <a href="print_ticket.php?id=<?= $row['id'] ?>" target="_blank" class="print-btn">
                                             <i class="fas fa-print"></i> Print
                                         </a>
@@ -401,7 +413,7 @@ if ($favResult && $favResult->num_rows > 0) {
                             </tr>
                             <?php endwhile; ?>
                         <?php else: ?>
-                            <tr><td colspan="5" style="text-align: center; padding: 40px; color: #777;">No appointments found.</td></tr>
+                            <tr><td colspan="5" class="no-appointments-msg">No appointments found.</td></tr>
                         <?php endif; ?>
                     </tbody>
                 </table>

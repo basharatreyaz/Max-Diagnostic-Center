@@ -1,5 +1,6 @@
 <?php
 session_start();
+date_default_timezone_set('Asia/Kolkata');
 
 // Ensure the user is logged in
 if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
@@ -252,7 +253,10 @@ $favicon = $settings['favicon'] ?? '';
         <link rel="icon" href="../<?= htmlspecialchars($favicon) ?>">
     <?php endif; ?>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/admin-sidebar.css">
     <link rel="stylesheet" href="../assets/css/admin-reports.css">
+    <link rel="stylesheet" href="../assets/css/admin-custom.css">
+    <link rel="stylesheet" href="../assets/css/admin-responsive.css">
 </head>
 <body>
     <?php include 'admin_sidebar.php'; ?>
@@ -261,7 +265,7 @@ $favicon = $settings['favicon'] ?? '';
             <div class="admin-header">
                 <h2><i class="fas fa-file-medical"></i> <?= $show_form ? ($edit_report ? 'Edit Report' : 'Add Report') : 'Manage Reports' ?></h2>
                 <?php if (!$show_form): ?>
-                    <a href="?action=add" class="btn-primary" style="text-decoration: none;"><i class="fas fa-plus"></i> Add Report</a>
+                    <a href="?action=add" class="btn-primary btn-add-report"><i class="fas fa-plus"></i> Add Report</a>
                 <?php endif; ?>
             </div>
             
@@ -279,7 +283,7 @@ $favicon = $settings['favicon'] ?? '';
                     </div>
 
                     <div class="diagnostic-wrapper">
-                        <h4 style="color: var(--secondary); margin-top: 0; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
+                        <h4 class="diagnostic-header">
                             <span><i class="fas fa-vial"></i> Diagnostic Tests</span>
                             <button type="button" onclick="addTest()" class="btn-primary add-test-btn"><i class="fas fa-plus"></i> Add Test</button>
                         </h4>
@@ -304,20 +308,20 @@ $favicon = $settings['favicon'] ?? '';
                                 foreach ($normalized_data as $idx => $test_data): 
                                 ?>
                                 <div class="test-group">
-                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                                        <h5 style="margin:0; color: var(--secondary); font-size: 15px;">Test <?= $idx + 1 ?></h5>
-                                        <label style="color: #ef4444; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 5px;">
+                                    <div class="test-group-header">
+                                        <h5 class="test-group-title">Test <?= $idx + 1 ?></h5>
+                                        <label class="test-group-remove-label">
                                             <input type="checkbox" name="remove_tests[]" value="<?= $idx ?>"> Remove Test
                                         </label>
                                     </div>
-                                    <div class="form-grid" style="margin-bottom: 15px;">
+                                    <div class="form-grid test-group-grid">
                                         <input type="text" name="old_test_names[<?= $idx ?>]" value="<?= htmlspecialchars($test_data['test_name']) ?>" placeholder="Test Name" required>
-                                        <input type="file" name="old_report_files_<?= $idx ?>[]" multiple accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" style="padding: 12px 15px;">
+                                        <input type="file" name="old_report_files_<?= $idx ?>[]" multiple accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" class="file-input-pad">
                                     </div>
                                     
                                     <?php if (!empty($test_data['files'])): ?>
-                                        <p style="margin: 0 0 10px; font-weight: 600; color: var(--text-muted); font-size: 13px;">Attached Files (Check to remove):</p>
-                                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                                        <p class="attached-files-title">Attached Files (Check to remove):</p>
+                                        <div class="attached-files-grid">
                                             <?php foreach ($test_data['files'] as $fidx => $file): ?>
                                                 <label class="remove-file-label">
                                                     <input type="hidden" name="old_test_files[<?= $idx ?>][]" value="<?= htmlspecialchars($file) ?>">
@@ -331,21 +335,21 @@ $favicon = $settings['favicon'] ?? '';
                                 <?php endforeach; ?>
                             <?php else: ?>
                                 <div class="test-group">
-                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                                        <h5 style="margin:0; color: var(--secondary); font-size: 15px;">Test 1</h5>
+                                    <div class="test-group-header">
+                                        <h5 class="test-group-title">Test 1</h5>
                                     </div>
-                                    <div class="form-grid" style="margin-bottom: 15px;">
+                                    <div class="form-grid test-group-grid">
                                         <input type="text" name="new_test_names[0]" placeholder="Test Name (e.g., Blood Test)" required>
-                                        <input type="file" name="new_report_files_0[]" multiple accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" style="padding: 12px 15px;">
+                                        <input type="file" name="new_report_files_0[]" multiple accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" class="file-input-pad">
                                     </div>
                                 </div>
                             <?php endif; ?>
                         </div>
                     </div>
 
-                    <div style="display: flex; gap: 15px; margin-top: 10px;">
-                        <button type="submit" name="save_report" class="btn-primary" style="font-family: 'Outfit', sans-serif;"><i class="fas fa-save"></i> <?= $edit_report ? 'Update Report' : 'Save Details' ?></button>
-                        <a href="reports.php" style="background: #f1f5f9; color: #64748b; padding: 14px 25px; border-radius: 8px; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; transition: 0.3s;"><i class="fas fa-times"></i> Cancel</a>
+                    <div class="form-actions-flex">
+                        <button type="submit" name="save_report" class="btn-primary btn-font-outfit"><i class="fas fa-save"></i> <?= $edit_report ? 'Update Report' : 'Save Details' ?></button>
+                        <a href="reports.php" class="btn-cancel-link"><i class="fas fa-times"></i> Cancel</a>
                     </div>
                 </form>
             </div>
@@ -367,7 +371,7 @@ $favicon = $settings['favicon'] ?? '';
                         <thead><tr><th>Tracking ID</th><th>Patient Name</th><th>Mobile</th><th>Test Name</th><th>Upload Date</th><th>Action</th></tr></thead>
                         <tbody>
                             <?php if ($reports && $reports->num_rows > 0): while ($row = $reports->fetch_assoc()): ?>
-                                <tr><td><span style="font-family: monospace; font-weight: 600; color: var(--primary);"><?= htmlspecialchars($row['tracking_id'] ?? 'N/A') ?></span></td><td><strong><?= htmlspecialchars($row['patient_first_name']) ?></strong></td><td><?= htmlspecialchars($row['mobile']) ?></td><td><span class="badge"><?= htmlspecialchars($row['test_name'] ?? 'N/A') ?></span></td><td><?= date('d M Y, h:i A', strtotime($row['uploaded_at'])) ?></td>
+                                <tr><td><span class="tracking-id-text"><?= htmlspecialchars($row['tracking_id'] ?? 'N/A') ?></span></td><td><strong><?= htmlspecialchars($row['patient_first_name']) ?></strong></td><td><?= htmlspecialchars($row['mobile']) ?></td><td><span class="badge"><?= htmlspecialchars($row['test_name'] ?? 'N/A') ?></span></td><td><?= date('d M Y, h:i A', strtotime($row['uploaded_at'])) ?></td>
                                     <td><div class="action-buttons">
                                         <a href="?edit_id=<?= $row['id'] ?>" class="edit-btn"><i class="fas fa-edit"></i> Edit</a>
                                         <?php if (!empty($row['report_file'])): ?>
@@ -390,15 +394,15 @@ $favicon = $settings['favicon'] ?? '';
                                                 }
                                             }
                                             if ($file_count === 0): ?>
-                                                <span class="badge" style="background: #fef2f2; color: #ef4444; border: 1px solid #fca5a5;">Pending Upload</span>
+                                                <span class="badge reports-pending-badge">Pending Upload</span>
                                             <?php endif; ?>
                                         <?php else: ?>
-                                            <span class="badge" style="background: #fef2f2; color: #ef4444; border: 1px solid #fca5a5;">Pending Upload</span>
+                                            <span class="badge reports-pending-badge">Pending Upload</span>
                                         <?php endif; ?>
-                                        <form method="POST" onsubmit="return confirm('Are you sure you want to delete this report?');" style="margin: 0;"><input type="hidden" name="csrf_token" value="<?= generateCsrfToken() ?>"><input type="hidden" name="id" value="<?= $row['id'] ?>"><button type="submit" name="delete_report" class="delete-btn"><i class="fas fa-trash-alt"></i> Delete</button></form>
+                                        <form method="POST" onsubmit="return confirm('Are you sure you want to delete this report?');" class="form-margin-0"><input type="hidden" name="csrf_token" value="<?= generateCsrfToken() ?>"><input type="hidden" name="id" value="<?= $row['id'] ?>"><button type="submit" name="delete_report" class="delete-btn"><i class="fas fa-trash-alt"></i> Delete</button></form>
                                     </div></td></tr>
                             <?php endwhile; else: ?>
-                                <tr><td colspan="6" style="text-align: center; padding: 40px; color: #777;">No reports uploaded yet.</td></tr>
+                                <tr><td colspan="6" class="no-reports-msg">No reports uploaded yet.</td></tr>
                             <?php endif; ?>
                         </tbody>
                     </table>
@@ -415,13 +419,13 @@ $favicon = $settings['favicon'] ?? '';
         const div = document.createElement('div');
         div.className = 'test-group';
         div.innerHTML = `
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                <h5 style="margin:0; color: var(--secondary); font-size: 15px;">New Test</h5>
-                <button type="button" onclick="this.parentElement.parentElement.remove()" style="background: none; border: none; color: #ef4444; cursor: pointer; font-weight: 600; font-family: 'Outfit', sans-serif;"><i class="fas fa-times"></i> Remove</button>
+            <div class="test-group-header">
+                <h5 class="test-group-title">New Test</h5>
+                <button type="button" onclick="this.parentElement.parentElement.remove()" class="remove-test-btn"><i class="fas fa-times"></i> Remove</button>
             </div>
-            <div class="form-grid" style="margin-bottom: 15px;">
+            <div class="form-grid test-group-grid">
                 <input type="text" name="new_test_names[${newTestCount}]" placeholder="Test Name (e.g., Blood Test)" required>
-                <input type="file" name="new_report_files_${newTestCount}[]" multiple accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" style="padding: 12px 15px;">
+                <input type="file" name="new_report_files_${newTestCount}[]" multiple accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" class="file-input-pad">
             </div>
         `;
         container.appendChild(div);

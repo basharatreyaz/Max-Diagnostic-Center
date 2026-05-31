@@ -195,6 +195,8 @@ EOD;
                     ('appointment_show_age', '1'), 
                     ('appointment_show_gender', '1'), 
                     ('appointment_show_address', '0'),
+                    ('appointment_show_department', '1'),
+                    ('appointment_show_doctor', '1'),
                     ('top_bar_address', 'Hyderbeigh, Baramulla, Jammu & Kashmir'), 
                     ('top_bar_timing', 'Mon - Sat: 8:00 AM - 8:00 PM | Sun: 9:00 AM - 2:00 PM'), 
                     ('top_bar_phone', '+91 7051674869'), 
@@ -270,7 +272,7 @@ EOD;
 <head>
     <meta charset="UTF-8">
     <title>Installation - Max Diagnostic Center</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.bunny.net/css?family=outfit:300,400,500,600,700,800" rel="stylesheet">
     <style>
         :root {
             --primary: #00a39d;

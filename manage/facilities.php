@@ -1,5 +1,6 @@
 <?php
 session_start();
+date_default_timezone_set('Asia/Kolkata');
 
 // Ensure the user is logged in
 if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
@@ -13,6 +14,7 @@ if (!isset($_SESSION['admin_permissions']) || ($_SESSION['admin_permissions'] !=
 }
 
 require_once '../includes/db.php';
+
 
 // Check if table exists, if not create and seed it
 $tableCheck = $conn->query("SHOW TABLES LIKE 'facilities'");
@@ -161,7 +163,10 @@ $favicon = $settings['favicon'] ?? '';
         <link rel="icon" href="../<?= htmlspecialchars($favicon) ?>">
     <?php endif; ?>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/admin-sidebar.css">
     <link rel="stylesheet" href="../assets/css/admin-facilities.css">
+    <link rel="stylesheet" href="../assets/css/admin-custom.css">
+    <link rel="stylesheet" href="../assets/css/admin-responsive.css">
 </head>
 <body>
     <?php include 'admin_sidebar.php'; ?>
@@ -184,8 +189,8 @@ $favicon = $settings['favicon'] ?? '';
                     <input type="file" name="image" accept="image/*" <?= $edit_facility ? '' : 'required' ?>>
                 </div>
                 <div class="form-actions">
-                    <button type="submit" name="<?= $edit_facility ? 'update_facility' : 'add_facility' ?>" class="btn-primary" style="font-family: 'Outfit', sans-serif;"><i class="fas fa-save"></i> <?= $edit_facility ? 'Update Facility' : 'Save Facility' ?></button>
-                    <a href="facilities.php" style="background: #f1f5f9; color: #64748b; padding: 14px 25px; border-radius: 8px; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: 0.3s; box-sizing: border-box;"><i class="fas fa-times"></i> Cancel</a>
+                    <button type="submit" name="<?= $edit_facility ? 'update_facility' : 'add_facility' ?>" class="btn-primary btn-font-outfit"><i class="fas fa-save"></i> <?= $edit_facility ? 'Update Facility' : 'Save Facility' ?></button>
+                    <a href="facilities.php" class="btn-cancel-link"><i class="fas fa-times"></i> Cancel</a>
                 </div>
             </form>
         </div>
@@ -199,7 +204,7 @@ $favicon = $settings['favicon'] ?? '';
                 <table>
                     <thead><tr><th>Image</th><th>Facility Name</th><th>Action</th></tr></thead>
                     <tbody>
-                        <?php if ($facilities && $facilities->num_rows > 0): ?><?php while ($row = $facilities->fetch_assoc()): ?><tr><td><img src="../<?= htmlspecialchars($row['image']) ?>" class="img-preview" alt="Facility"></td><td><span style="font-weight: 600; color: var(--secondary); font-size: 16px;"><?= htmlspecialchars($row['name']) ?></span></td><td><div class="action-buttons"><a href="?edit_id=<?= $row['id'] ?>" class="edit-btn"><i class="fas fa-edit"></i> Edit</a><form method="POST" onsubmit="return confirm('Are you sure you want to delete this facility?');" class="action-form"><input type="hidden" name="csrf_token" value="<?= generateCsrfToken() ?>"><input type="hidden" name="id" value="<?= $row['id'] ?>"><button type="submit" name="delete_facility" class="delete-btn"><i class="fas fa-trash-alt"></i> Delete</button></form></div></td></tr><?php endwhile; ?><?php else: ?><tr class="no-results-row"><td colspan="3">No facilities found in the database.</td></tr><?php endif; ?>
+                        <?php if ($facilities && $facilities->num_rows > 0): ?><?php while ($row = $facilities->fetch_assoc()): ?><tr><td><img src="../<?= htmlspecialchars($row['image']) ?>" class="img-preview" alt="Facility"></td><td><span class="facility-name-text"><?= htmlspecialchars($row['name']) ?></span></td><td><div class="action-buttons"><a href="?edit_id=<?= $row['id'] ?>" class="edit-btn"><i class="fas fa-edit"></i> Edit</a><form method="POST" onsubmit="return confirm('Are you sure you want to delete this facility?');" class="action-form"><input type="hidden" name="csrf_token" value="<?= generateCsrfToken() ?>"><input type="hidden" name="id" value="<?= $row['id'] ?>"><button type="submit" name="delete_facility" class="delete-btn"><i class="fas fa-trash-alt"></i> Delete</button></form></div></td></tr><?php endwhile; ?><?php else: ?><tr class="no-results-row"><td colspan="3" class="no-facilities-msg">No facilities found in the database.</td></tr><?php endif; ?>
                     </tbody>
                 </table>
             </div>

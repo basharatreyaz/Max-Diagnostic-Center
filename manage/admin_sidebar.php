@@ -31,9 +31,6 @@ function has_permission($module) {
     return $admin_permissions === 'all' || in_array($module, (array)$admin_permissions);
 }
 ?>
-<link rel="stylesheet" href="../assets/css/admin-sidebar.css">
-<link rel="stylesheet" href="../assets/css/admin-responsive.css">
-
 <div class="mobile-admin-header">
     <div class="mobile-logo">
         <img src="<?= htmlspecialchars($adminLogo) ?>" alt="Max Diagnostic Center">

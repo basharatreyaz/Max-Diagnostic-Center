@@ -1,5 +1,6 @@
 <?php
 session_start();
+date_default_timezone_set('Asia/Kolkata');
 
 if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true || $_SESSION['admin_role'] !== 'superadmin') {
     header("Location: login.php");
@@ -105,8 +106,11 @@ $favicon = $settings['favicon'] ?? '';
         <link rel="icon" href="../<?= htmlspecialchars($favicon) ?>">
     <?php endif; ?>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/admin-sidebar.css">
     <link rel="stylesheet" href="../assets/css/admin-doctors.css"> <!-- Reusing styles -->
     <link rel="stylesheet" href="../assets/css/admin-users.css">
+    <link rel="stylesheet" href="../assets/css/admin-custom.css">
+    <link rel="stylesheet" href="../assets/css/admin-responsive.css">
 </head>
 <body>
     <?php include 'admin_sidebar.php'; ?>
@@ -115,7 +119,7 @@ $favicon = $settings['favicon'] ?? '';
             <div class="admin-header">
                 <h2><i class="fas fa-users-cog"></i> <?= $show_form ? 'Manage User' : 'Admin Users' ?></h2>
                 <?php if (!$show_form): ?>
-                    <a href="?action=add" class="btn-primary" style="text-decoration: none;"><i class="fas fa-plus"></i> Add User</a>
+                    <a href="?action=add" class="btn-primary btn-add-report"><i class="fas fa-plus"></i> Add User</a>
                 <?php endif; ?>
             </div>
 
@@ -133,7 +137,7 @@ $favicon = $settings['favicon'] ?? '';
                             <input type="password" name="password" placeholder="<?= $edit_user ? 'Leave blank to keep current' : 'Password' ?>" <?= $edit_user ? '' : 'required' ?> class="form-input">
                         </div>
                         
-                        <h4 style="margin-top: 20px;">Permissions</h4>
+                        <h4 class="perm-header">Permissions</h4>
                         <?php 
                         $perms = $edit_user ? json_decode($edit_user['permissions'], true) : [];
                         if (!is_array($perms)) $perms = [];
@@ -152,9 +156,9 @@ $favicon = $settings['favicon'] ?? '';
                             <?php endforeach; ?>
                         </div>
 
-                        <div class="form-actions" style="margin-top: 25px;">
-                            <button type="submit" name="save_user" class="btn-primary" style="font-family: 'Outfit', sans-serif;"><i class="fas fa-save"></i> Save User</button>
-                            <a href="users.php" style="background: #f1f5f9; color: #64748b; padding: 14px 25px; border-radius: 8px; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: 0.3s; box-sizing: border-box;"><i class="fas fa-times"></i> Cancel</a>
+                        <div class="form-actions users-form-actions">
+                            <button type="submit" name="save_user" class="btn-primary btn-font-outfit"><i class="fas fa-save"></i> Save User</button>
+                            <a href="users.php" class="btn-cancel-link"><i class="fas fa-times"></i> Cancel</a>
                         </div>
                     </form>
                 </div>
@@ -184,7 +188,7 @@ $favicon = $settings['favicon'] ?? '';
                                             <div class="action-buttons">
                                                 <a href="?edit_id=<?= $row['id'] ?>" class="edit-btn"><i class="fas fa-edit"></i> Edit</a>
                                                 <?php if ($row['role'] != 'superadmin'): ?>
-                                                <form method="POST" onsubmit="return confirm('Delete this user?');" class="action-form" style="display:inline;">
+                                                <form method="POST" onsubmit="return confirm('Delete this user?');" class="action-form inline-form">
                                                     <input type="hidden" name="csrf_token" value="<?= generateCsrfToken() ?>">
                                                     <input type="hidden" name="id" value="<?= $row['id'] ?>">
                                                     <button type="submit" name="delete_user" class="delete-btn"><i class="fas fa-trash-alt"></i> Delete</button>
