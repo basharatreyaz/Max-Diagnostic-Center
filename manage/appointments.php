@@ -294,7 +294,7 @@ if ($favResult && $favResult->num_rows > 0) {
                         <input type="hidden" name="doctor" value="Not Specified">
                     <?php endif; ?>
 
-                    <input type="date" name="appointment_date" class="form-input" required>
+                    <input type="text" name="appointment_date" class="form-input" onfocus="(this.type='date')" onblur="(this.value == '' ? this.type='text' : this.type='date')" placeholder="Select Date" required>
                     
                     <select name="status" class="form-input" required>
                         <option value="Pending">Pending</option>

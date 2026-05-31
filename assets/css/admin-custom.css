@@ -86,3 +86,12 @@
     .editable-field { border-bottom: 1px dashed #94a3b8; }
     .editable-field:not(:empty) { border-bottom: none; }
 }
+
+/* Mobile Date Input Fixes */
+input[type="date"] {
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    -webkit-appearance: none;
+    appearance: none;
+}

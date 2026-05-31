@@ -66,6 +66,15 @@ button, input, select, textarea {
     font-family: inherit;
 }
 
+/* Mobile Date Input Fixes */
+input[type="date"] {
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
 /* Prevent iOS auto-linking phone number color change */
 a[href^="tel"] {
     color: inherit !important;

@@ -163,7 +163,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['book_appointment'])) {
                         natcasesort($specialtiesList);
                         ?>
 
-                        <?php if (!isset($form_settings['appointment_show_department']) || $form_settings['appointment_show_department'] == '1'): ?>
+                         <?php if (!isset($form_settings['appointment_show_department']) || $form_settings['appointment_show_department'] == '1'): ?>
                         <select class="form-select" name="department" id="department-select" required>
                             <option value="" class="form-option">Select Department</option>
                             <?php
@@ -191,7 +191,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['book_appointment'])) {
                             <input type="hidden" name="doctor" value="Not Specified">
                         <?php endif; ?>
 
-                        <input class="form-input" name="appointment_date" type="date" required>
+                        <input class="form-input" name="appointment_date" type="text" onfocus="(this.type='date')" onblur="(this.value == '' ? this.type='text' : this.type='date')" placeholder="Select Date" required>
 
                         <?php if (!empty($form_settings['appointment_show_address'])): ?>
                             <textarea name="address" class="form-input form-full-width" placeholder="Address" rows="3"></textarea>

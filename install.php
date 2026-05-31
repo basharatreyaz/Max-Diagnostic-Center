@@ -189,7 +189,8 @@ EOD;
                     ('body_start_scripts', ''), 
                     ('footer_scripts', ''), 
                     ('ticket_title', 'Appointment Token'), 
-                    ('ticket_footer_text', 'Please present this token at the reception desk.'), 
+                    ('ticket_footer_text', ''), 
+                    ('ticket_qr_link', ''), 
                     ('ticket_phone', '+91 7051674869'), 
                     ('ticket_address', 'Opposite JK Bank, Hyderbeigh, Jammu & Kashmir 193121'),
                     ('appointment_show_age', '1'), 
@@ -238,6 +239,14 @@ EOD;
                     name VARCHAR(150) NOT NULL,
                     image VARCHAR(255) NOT NULL
                 )");
+                
+                $conn->query("INSERT IGNORE INTO facilities (name, image) VALUES 
+                    ('Digital X-Ray', 'assets/images/xray.jpg'),
+                    ('Ultrasound', 'assets/images/ultrasound.jpg'),
+                    ('ECG', 'assets/images/ecg.jpg'),
+                    ('Pathology Lab', 'assets/images/pathology.jpg'),
+                    ('Automated Analyzer', 'assets/images/auto.jpg'),
+                    ('Sample Collection', 'assets/images/sample.jpg')");
 
                 // Reports
                 $conn->query("CREATE TABLE IF NOT EXISTS reports (
@@ -260,6 +269,17 @@ EOD;
                     status ENUM('Unread', 'Read') DEFAULT 'Unread',
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )");
+
+                // Services
+                $conn->query("CREATE TABLE IF NOT EXISTS services (
+                    id INT(11) AUTO_INCREMENT PRIMARY KEY,
+                    title VARCHAR(150) NOT NULL,
+                    description TEXT NOT NULL,
+                    image VARCHAR(255) DEFAULT NULL,
+                    price VARCHAR(50) DEFAULT NULL
+                )");
+                
+                $conn->query("INSERT IGNORE INTO services (title, description) VALUES ('Diagnostic Services', 'Comprehensive pathology and radiology services including blood tests, biochemistry, and microbiology.'), ('Specialist Consultations', 'Expert consultations in general medicine, cardiology, orthopaedics, and gynaecology.'), ('Health Packages', 'Wide range of preventive health check-up packages for you and your family.'), ('Home Collection', 'Convenient home sample collection services by trained phlebotomists.')");
 
                 $step = 2;
             }

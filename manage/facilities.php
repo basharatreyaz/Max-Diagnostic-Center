@@ -35,6 +35,18 @@ if ($tableCheck && $tableCheck->num_rows == 0) {
         ('Automated Analyzer', 'assets/images/auto.jpg'),
         ('Sample Collection', 'assets/images/sample.jpg')";
     $conn->query($seed);
+} else {
+    // If the table exists but is empty, populate it with the default facilities
+    $countCheck = $conn->query("SELECT COUNT(*) as count FROM facilities");
+    if ($countCheck && $countCheck->fetch_assoc()['count'] == 0) {
+        $conn->query("INSERT INTO facilities (name, image) VALUES 
+            ('Digital X-Ray', 'assets/images/xray.jpg'),
+            ('Ultrasound', 'assets/images/ultrasound.jpg'),
+            ('ECG', 'assets/images/ecg.jpg'),
+            ('Pathology Lab', 'assets/images/pathology.jpg'),
+            ('Automated Analyzer', 'assets/images/auto.jpg'),
+            ('Sample Collection', 'assets/images/sample.jpg')");
+    }
 }
 
 // Handle Add Facility

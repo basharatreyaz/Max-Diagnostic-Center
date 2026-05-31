@@ -81,15 +81,15 @@ $meta_description = !empty($app_settings["meta_desc_{$page_key}"]) ? $app_settin
 
             <div class="top-right">
 
-                <span class="top-info">
+                <a href="tel:<?= preg_replace('/[^0-9+]/', '', $top_bar_phone) ?>" class="top-info" style="color: inherit; text-decoration: none;">
                     <i class="fas fa-phone top-icon"></i>
                     <?= htmlspecialchars($top_bar_phone) ?>
-                </span>
+                </a>
 
-                <span class="top-info">
+                <a href="mailto:<?= htmlspecialchars($top_bar_email) ?>" class="top-info hide-on-mobile" style="color: inherit; text-decoration: none;">
                     <i class="fas fa-envelope top-icon"></i>
                     <?= htmlspecialchars($top_bar_email) ?>
-                </span>
+                </a>
 
             </div>
 

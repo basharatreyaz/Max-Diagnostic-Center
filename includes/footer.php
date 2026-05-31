@@ -109,11 +109,15 @@
                     </li>
 
                     <li class="footer-item">
-                        <?= htmlspecialchars($top_bar_phone ?? '+91 7051674869') ?>
+                        <a href="tel:<?= preg_replace('/[^0-9+]/', '', $top_bar_phone ?? '+91 7051674869') ?>" style="color: inherit; text-decoration: none;">
+                            <?= htmlspecialchars($top_bar_phone ?? '+91 7051674869') ?>
+                        </a>
                     </li>
 
                     <li class="footer-item">
-                        <?= htmlspecialchars($top_bar_email ?? 'info@maxdiagnostic.com') ?>
+                        <a href="mailto:<?= htmlspecialchars($top_bar_email ?? 'info@maxdiagnostic.com') ?>" style="color: inherit; text-decoration: none;">
+                            <?= htmlspecialchars($top_bar_email ?? 'info@maxdiagnostic.com') ?>
+                        </a>
                     </li>
 
                     <li class="footer-item">

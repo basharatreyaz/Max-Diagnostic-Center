@@ -5,15 +5,7 @@ $appointment_msg = '';
 $appointment_error = '';
 
 // Fetch appointment form settings
-$form_settings = [];
-if (isset($conn)) {
-    $settingsResult = $conn->query("SELECT setting_key, setting_value FROM settings WHERE setting_key LIKE 'appointment_%'");
-    if ($settingsResult) {
-        while ($row = $settingsResult->fetch_assoc()) {
-            $form_settings[$row['setting_key']] = $row['setting_value'];
-        }
-    }
-}
+$form_settings = getCachedSettings($conn);
 
 if (isset($_SESSION['appointment_msg'])) {
     $appointment_msg = $_SESSION['appointment_msg'];
@@ -174,116 +166,43 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['book_appointment'])) {
 
             </div>
 
-            <div class="services-grid">
+            <div class="services-page-grid">
+                <?php
+                $tableCheck = $conn->query("SHOW TABLES LIKE 'services'");
+                if ($tableCheck && $tableCheck->num_rows > 0) {
+                    $result = $conn->query("SELECT * FROM services ORDER BY id ASC LIMIT 3");
+                    if ($result && $result->num_rows > 0) {
+                        while ($row = $result->fetch_assoc()) {
+                            ?>
+                            <div class="service-item-card">
+                                <?php if(!empty($row['image'])): ?>
+                                    <img src="<?= htmlspecialchars($row['image']) ?>" alt="<?= htmlspecialchars($row['title']) ?>" class="service-item-img">
+                                <?php else: ?>
+                                    <div class="service-item-placeholder">
+                                        <?= htmlspecialchars($row['title']) ?>
+                                    </div>
+                                <?php endif; ?>
+                                
+                                <div class="service-item-content">
+                                    <h3 class="service-item-title"><?= htmlspecialchars($row['title']) ?></h3>
+                                    <?php if(!empty($row['price'])): ?>
+                                        <div class="service-item-price"><?= htmlspecialchars($row['price']) ?></div>
+                                    <?php endif; ?>
+                                    <p class="service-item-desc"><?= htmlspecialchars($row['description']) ?></p>
+                                    <a href="appointments.php" class="service-item-link"><i class="fas fa-arrow-right"></i> Book Now</a>
+                                </div>
+                            </div>
+                            <?php
+                        }
+                    }
+                }
+                ?>
+            </div>
 
-                <!-- Card -->
-
-                <div class="service-card">
-
-                    <div class="service-icon cyan">
-
-                        <i class="fas fa-flask"></i>
-
-                    </div>
-
-                    <h3>Diagnostic Services</h3>
-
-                    <ul>
-
-                        <li class="service-icon-list"><i class="fas fa-vial service-icon-list-icon service-icon-orange"></i> Blood Tests</li>
-
-                        <li class="service-icon-list"><i class="fas fa-flask service-icon-list-icon service-icon-orange"></i> Biochemistry</li>
-
-                        <li class="service-icon-list"><i class="fas fa-microscope service-icon-list-icon service-icon-orange"></i> Pathology</li>
-
-                        <li class="service-icon-list"><i class="fas fa-bacteria service-icon-list-icon service-icon-orange"></i> Microbiology</li>
-
-                        <li class="service-icon-list"><i class="fas fa-x-ray service-icon-list-icon service-icon-orange"></i> Radiology</li>
-
-                    </ul>
-
-                </div>
-
-                <!-- Card -->
-
-                <div class="service-card">
-
-                    <div class="service-icon green">
-
-                        <i class="fas fa-stethoscope"></i>
-
-                    </div>
-
-                    <h3>Specialist Consultations</h3>
-
-                    <ul>
-
-                        <li class="service-icon-list"><i class="fas fa-stethoscope service-icon-list-icon service-icon-green"></i> General Medicine</li>
-
-                        <li class="service-icon-list"><i class="fas fa-heart-pulse service-icon-list-icon service-icon-green"></i> Cardiology</li>
-
-                        <li class="service-icon-list"><i class="fas fa-bone service-icon-list-icon service-icon-green"></i> Orthopaedics</li>
-
-                        <li class="service-icon-list"><i class="fas fa-child-reaching service-icon-list-icon service-icon-green"></i> Paediatrics</li>
-
-                        <li class="service-icon-list"><i class="fas fa-person-pregnant service-icon-list-icon service-icon-green"></i> Gynaecology</li>
-
-                    </ul>
-
-                </div>
-
-                <!-- Card -->
-
-                <div class="service-card">
-
-                    <div class="service-icon orange">
-
-                        <i class="fas fa-user-group"></i>
-
-                    </div>
-
-                    <h3>Patient Services</h3>
-
-                    <ul>
-
-                        <li class="service-icon-list"><i class="fas fa-calendar-plus service-icon-list-icon service-icon-orange"></i> Online Appointment</li>
-
-                        <li class="service-icon-list"><i class="fas fa-file-arrow-down service-icon-list-icon service-icon-orange"></i> Report Downloads</li>
-
-                        <li class="service-icon-list"><i class="fas fa-kit-medical service-icon-list-icon service-icon-orange"></i> Health Packages</li>
-
-                        <li class="service-icon-list"><i class="fas fa-house-medical service-icon-list-icon service-icon-orange"></i> Home Sample Collection</li>
-
-                    </ul>
-
-                </div>
-
-                <!-- Card -->
-
-                <div class="service-card package-card">
-
-                    <div class="service-icon purple">
-
-                        <i class="fas fa-gift service-icon-inner"></i>
-
-                    </div>
-
-                    <h3 class="service-title">Health Packages</h3>
-
-                    <p class="service-desc">
-
-                        Choose from a wide range
-                        of health check-up packages
-                        for you and your family.
-
-                    </p>
-
-                    <a class="service-link" href="#">
-                        View Packages
-                    </a>
-
-                </div>
-
+            <div class="text-center" style="margin-top: 40px;">
+                <a href="services.php" class="view-all-btn">
+                    View All Services
+                </a>
             </div>
 
         </div>
@@ -308,7 +227,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['book_appointment'])) {
 
         <?php
         $specialists = [];
-        $result = $conn->query("SELECT * FROM doctors WHERE is_active = 1");
+        $result = $conn->query("SELECT * FROM doctors WHERE is_active = 1 LIMIT 4");
         if ($result && $result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
                 $specialists[] = $row;
@@ -486,7 +405,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['book_appointment'])) {
                             <input type="hidden" name="doctor" value="Not Specified">
                         <?php endif; ?>
 
-                        <input class="form-input" name="appointment_date" type="date" required>
+                        <input class="form-input" name="appointment_date" type="text" onfocus="(this.type='date')" onblur="(this.value == '' ? this.type='text' : this.type='date')" placeholder="Select Date" required>
 
                         <?php if (!empty($form_settings['appointment_show_address'])): ?>
                             <textarea name="address" class="form-input" placeholder="Address" rows="3" style="grid-column: 1 / -1;"></textarea>
@@ -527,7 +446,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['book_appointment'])) {
 
         <?php
         $facilities = [];
-        $result = $conn->query("SELECT * FROM facilities ORDER BY id ASC");
+        $result = $conn->query("SELECT * FROM facilities ORDER BY id ASC LIMIT 6");
         if ($result && $result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
                 $facilities[] = $row;

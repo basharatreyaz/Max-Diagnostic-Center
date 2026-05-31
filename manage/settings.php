@@ -405,7 +405,7 @@ if (isset($_SESSION['setting_msg'])) {
                     </div>
                     <div class="form-group">
                         <label for="ticket_qr_link">QR Code Link (Optional)</label>
-                        <input type="text" id="ticket_qr_link" name="ticket_qr_link" value="<?= htmlspecialchars($ticket_qr_link) ?>" placeholder="Leave blank to use default (download-reports.php)">
+                        <input type="text" id="ticket_qr_link" name="ticket_qr_link" value="<?= htmlspecialchars($ticket_qr_link) ?>" placeholder="Leave blank to use default (reports.php)">
                     </div>
                     <div class="form-group">
                         <label for="ticket_footer_text">Ticket Footer Text</label>

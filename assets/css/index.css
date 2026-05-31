@@ -340,6 +340,9 @@
     border-radius:12px;
     font-family:'Outfit',sans-serif;
     transition:all .3s ease;
+    box-sizing: border-box;
+    max-width: 100%;
+    min-width: 0;
 }
 
 .form-input:focus,
