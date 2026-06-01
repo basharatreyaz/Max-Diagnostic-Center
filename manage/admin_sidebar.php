@@ -55,6 +55,9 @@ function has_permission($module) {
         <?php if (has_permission('appointments')): ?>
         <li><a href="appointments.php" class="<?= $currentPage == 'appointments.php' ? 'active' : '' ?>"><i class="fas fa-calendar-check"></i> <span class="nav-text">Appointments</span><?php if ($pendingAppointmentsCount > 0): ?> <span class="sidebar-badge"><?= $pendingAppointmentsCount ?></span><?php endif; ?></a></li>
         <?php endif; ?>
+        <?php if (has_permission('patients')): ?>
+        <li><a href="patients.php" class="<?= $currentPage == 'patients.php' ? 'active' : '' ?>"><i class="fas fa-users"></i> <span class="nav-text">Patients</span></a></li>
+        <?php endif; ?>
         <?php if (has_permission('reports')): ?>
         <li><a href="reports.php" class="<?= $currentPage == 'reports.php' ? 'active' : '' ?>"><i class="fas fa-file-medical"></i> <span class="nav-text">Reports</span></a></li>
         <?php endif; ?>

@@ -34,7 +34,7 @@ body.dark-mode {
     --border: #334155;
 }
 body.dark-mode .sidebar, body.dark-mode .card, body.dark-mode .stat-card { background: #1e293b; border-color: var(--border); }
-body.dark-mode input, body.dark-mode select { background: #0f172a; color: var(--text-dark); border-color: var(--border); }
+body.dark-mode input, body.dark-mode select, body.dark-mode textarea { background: #0f172a; color: var(--text-dark); border-color: var(--border); }
 body.dark-mode input[type="file"] { background: #0f172a !important; }
 body.dark-mode th { background: #1e293b; color: var(--secondary); border-color: var(--border); }
 body.dark-mode td { border-color: var(--border); }

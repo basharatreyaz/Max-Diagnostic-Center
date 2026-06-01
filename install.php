@@ -50,15 +50,36 @@ function handleAppointmentBooking($conn, $postData) {
     $mobile = $postData['mobile'];
     $department = $postData['department'];
     $doctor = $postData['doctor'];
-    $appointment_date = $postData['appointment_date'];
+    $raw_date = str_replace('/', '-', $postData['appointment_date']);
+    $parsed = strtotime($raw_date);
+    $appointment_date = $parsed ? date('Y-m-d', $parsed) : $postData['appointment_date'];
     $age = isset($postData['age']) && $postData['age'] !== '' ? (int)$postData['age'] : null;
     $gender = isset($postData['gender']) && $postData['gender'] !== '' ? $postData['gender'] : null;
     $address = isset($postData['address']) && $postData['address'] !== '' ? $postData['address'] : null;
+    $time_slot = isset($postData['time_slot']) && $postData['time_slot'] !== '' ? $postData['time_slot'] : null;
     $status = 'Pending';
 
-    $stmt = $conn->prepare("INSERT INTO appointments (patient_name, mobile, department, doctor, appointment_date, status, age, gender, address) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param("ssssssiss", $patient_name, $mobile, $department, $doctor, $appointment_date, $status, $age, $gender, $address);
-    return $stmt->execute();
+    $stmt = $conn->prepare("INSERT INTO appointments (patient_name, mobile, department, doctor, appointment_date, time_slot, status, age, gender, address) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param("ssssssssss", $patient_name, $mobile, $department, $doctor, $appointment_date, $time_slot, $status, $age, $gender, $address);
+    $result = $stmt->execute();
+
+    if ($result) {
+        $name_esc = $conn->real_escape_string(trim($patient_name));
+        $phone_esc = $conn->real_escape_string(trim($mobile));
+        $age_val = $age !== null ? $age : "NULL";
+        $gender_val = $gender !== null ? "'" . $conn->real_escape_string(trim($gender)) . "'" : "NULL";
+        $address_esc = $conn->real_escape_string(trim($address ?? ''));
+        $doctor_esc = $conn->real_escape_string(trim($doctor ?? ''));
+        
+        $check = $conn->query("SELECT id FROM patients WHERE phone = '$phone_esc' AND LOWER(name) = LOWER('$name_esc')");
+        if ($check && $check->num_rows == 0) {
+            $tableCheck = $conn->query("SHOW TABLES LIKE 'patients'");
+            if ($tableCheck && $tableCheck->num_rows > 0) {
+                $conn->query("INSERT INTO patients (name, phone, age, gender, address, doctor_appointed) VALUES ('$name_esc', '$phone_esc', $age_val, $gender_val, '$address_esc', '$doctor_esc')");
+            }
+        }
+    }
+    return $result;
 }
 
 // Reusable pagination functions
@@ -217,7 +238,20 @@ EOD;
                     department VARCHAR(100) NOT NULL,
                     doctor VARCHAR(100) NOT NULL,
                     appointment_date DATE NOT NULL,
-                    status ENUM('Pending', 'Confirmed', 'Completed', 'Cancelled') DEFAULT 'Pending',
+                    time_slot VARCHAR(50) DEFAULT NULL,
+                    status ENUM('Pending', 'Confirmed') DEFAULT 'Pending',
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )");
+
+                // Patients
+                $conn->query("CREATE TABLE IF NOT EXISTS patients (
+                    id INT(11) AUTO_INCREMENT PRIMARY KEY,
+                    name VARCHAR(150) NOT NULL,
+                    phone VARCHAR(20) NOT NULL,
+                    age INT(3) DEFAULT NULL,
+                    gender VARCHAR(20) DEFAULT NULL,
+                    address TEXT,
+                    doctor_appointed VARCHAR(100),
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )");
 

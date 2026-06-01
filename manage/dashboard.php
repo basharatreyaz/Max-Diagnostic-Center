@@ -15,9 +15,8 @@ $doctorsCount = 0;
 $appointmentsCount = 0;
 $pendingAppointmentsCount = 0;
 $confirmedAppointmentsCount = 0;
-$completedAppointmentsCount = 0;
-$cancelledAppointmentsCount = 0;
 $reportsCount = 0;
+$patientsCount = 0;
 
 if ($conn->query("SHOW TABLES LIKE 'doctors'")->num_rows > 0) {
     $doctorsCount = $conn->query("SELECT COUNT(*) as count FROM doctors")->fetch_assoc()['count'] ?? 0;
@@ -29,13 +28,14 @@ if ($conn->query("SHOW TABLES LIKE 'appointments'")->num_rows > 0) {
             $appointmentsCount += $row['count'];
             if ($row['status'] == 'Pending') $pendingAppointmentsCount = $row['count'];
             if ($row['status'] == 'Confirmed') $confirmedAppointmentsCount = $row['count'];
-            if ($row['status'] == 'Completed') $completedAppointmentsCount = $row['count'];
-            if ($row['status'] == 'Cancelled') $cancelledAppointmentsCount = $row['count'];
         }
     }
 }
 if ($conn->query("SHOW TABLES LIKE 'reports'")->num_rows > 0) {
     $reportsCount = $conn->query("SELECT COUNT(*) as count FROM reports")->fetch_assoc()['count'] ?? 0;
+}
+if ($conn->query("SHOW TABLES LIKE 'patients'")->num_rows > 0) {
+    $patientsCount = $conn->query("SELECT COUNT(*) as count FROM patients")->fetch_assoc()['count'] ?? 0;
 }
 
 $favicon = '';
@@ -75,6 +75,10 @@ if ($favResult && $favResult->num_rows > 0) {
                 <div class="stat-icon stat-icon-blue"><i class="fas fa-user-md"></i></div>
                 <div class="stat-info"><h3 class="stat-value"><?= $doctorsCount ?></h3><span class="stat-label">Total Doctors</span></div>
             </div>
+            <div class="stat-card stat-card-link" onclick="window.location.href='patients.php'">
+                <div class="stat-icon stat-icon-indigo"><i class="fas fa-users"></i></div>
+                <div class="stat-info"><h3 class="stat-value"><?= $patientsCount ?></h3><span class="stat-label">Total Patients</span></div>
+            </div>
             <div class="stat-card stat-card-link" onclick="window.location.href='reports.php'">
                 <div class="stat-icon stat-icon-orange"><i class="fas fa-file-medical"></i></div>
                 <div class="stat-info"><h3 class="stat-value"><?= $reportsCount ?></h3><span class="stat-label">Total Reports</span></div>
@@ -90,14 +94,6 @@ if ($favResult && $favResult->num_rows > 0) {
             <div class="stat-card stat-card-link" onclick="window.location.href='appointments.php?status=Confirmed'">
                 <div class="stat-icon stat-icon-indigo"><i class="fas fa-thumbs-up"></i></div>
                 <div class="stat-info"><h3 class="stat-value"><?= $confirmedAppointmentsCount ?></h3><span class="stat-label">Confirmed Appointments</span></div>
-            </div>
-            <div class="stat-card stat-card-link" onclick="window.location.href='appointments.php?status=Completed'">
-                <div class="stat-icon stat-icon-emerald"><i class="fas fa-check-double"></i></div>
-                <div class="stat-info"><h3 class="stat-value"><?= $completedAppointmentsCount ?></h3><span class="stat-label">Completed Appointments</span></div>
-            </div>
-            <div class="stat-card stat-card-link" onclick="window.location.href='appointments.php?status=Cancelled'">
-                <div class="stat-icon stat-icon-gray"><i class="fas fa-times-circle"></i></div>
-                <div class="stat-info"><h3 class="stat-value"><?= $cancelledAppointmentsCount ?></h3><span class="stat-label">Cancelled Appointments</span></div>
             </div>
         </div>
         </div>

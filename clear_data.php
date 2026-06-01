@@ -18,7 +18,8 @@ $tables = [
     'facilities',
     'reports',
     'inquiries',
-    'services'
+    'services',
+    'patients'
 ];
 
 // Temporarily disable foreign key checks to prevent constraint errors

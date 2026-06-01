@@ -409,6 +409,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['book_appointment'])) {
 
                         <input class="form-input" name="appointment_date" type="text" onfocus="(this.type='date')" onblur="(this.value == '' ? this.type='text' : this.type='date')" placeholder="Select Date" required>
 
+                        <select class="form-select" name="time_slot">
+                            <option value="" class="form-option">Select Time Slot (Optional)</option>
+                            <option value="Morning (9 AM - 12 PM)" class="form-option">Morning (9 AM - 12 PM)</option>
+                            <option value="Afternoon (12 PM - 3 PM)" class="form-option">Afternoon (12 PM - 3 PM)</option>
+                            <option value="Evening (3 PM - 6 PM)" class="form-option">Evening (3 PM - 6 PM)</option>
+                        </select>
+
                         <?php if (!empty($form_settings['appointment_show_address'])): ?>
                             <textarea name="address" class="form-input" placeholder="Address" rows="3" style="grid-column: 1 / -1;"></textarea>
                         <?php endif; ?>

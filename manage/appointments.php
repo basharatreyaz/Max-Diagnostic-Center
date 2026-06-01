@@ -24,6 +24,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_status'])) {
     $stmt = $conn->prepare("UPDATE appointments SET status=? WHERE id=?");
     $stmt->bind_param("si", $status, $id);
     $stmt->execute();
+
+    if ($status === 'Confirmed') {
+        $appt_res = $conn->query("SELECT patient_name, mobile, age, gender, address, doctor FROM appointments WHERE id = " . (int)$id);
+        if ($appt_res && $appt_res->num_rows > 0) {
+            $appt = $appt_res->fetch_assoc();
+            $name_esc = $conn->real_escape_string(trim($appt['patient_name']));
+            $phone_esc = $conn->real_escape_string(trim($appt['mobile']));
+            $age_val = !empty($appt['age']) ? (int)$appt['age'] : "NULL";
+            $gender_val = !empty($appt['gender']) ? "'" . $conn->real_escape_string(trim($appt['gender'])) . "'" : "NULL";
+            $address_esc = $conn->real_escape_string(trim($appt['address'] ?? ''));
+            $doctor_esc = $conn->real_escape_string(trim($appt['doctor'] ?? ''));
+            
+            $check = $conn->query("SELECT id FROM patients WHERE phone = '$phone_esc' AND LOWER(name) = LOWER('$name_esc')");
+            if ($check && $check->num_rows == 0) {
+                $tableCheck = $conn->query("SHOW TABLES LIKE 'patients'");
+                if ($tableCheck && $tableCheck->num_rows > 0) {
+                    $conn->query("INSERT INTO patients (name, phone, age, gender, address, doctor_appointed) VALUES ('$name_esc', '$phone_esc', $age_val, $gender_val, '$address_esc', '$doctor_esc')");
+                }
+            }
+        }
+    }
+
     header("Location: appointments.php");
     exit;
 }
@@ -35,16 +57,38 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_appointment'])) {
     $mobile = $_POST['mobile'];
     $department = $_POST['department'];
     $doctor = $_POST['doctor'];
-    $appointment_date = $_POST['appointment_date'];
+    
+    $raw_date = str_replace('/', '-', $_POST['appointment_date']);
+    $parsed = strtotime($raw_date);
+    $appointment_date = $parsed ? date('Y-m-d', $parsed) : $_POST['appointment_date'];
+
+    $time_slot = isset($_POST['time_slot']) && $_POST['time_slot'] !== '' ? $_POST['time_slot'] : null;
     $status = $_POST['status'];
     
     $age = isset($_POST['age']) && $_POST['age'] !== '' ? (int)$_POST['age'] : null;
     $gender = isset($_POST['gender']) && $_POST['gender'] !== '' ? $_POST['gender'] : null;
     $address = isset($_POST['address']) && $_POST['address'] !== '' ? $_POST['address'] : null;
 
-    $stmt = $conn->prepare("INSERT INTO appointments (patient_name, mobile, department, doctor, appointment_date, status, age, gender, address) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param("ssssssiss", $patient_name, $mobile, $department, $doctor, $appointment_date, $status, $age, $gender, $address);
+    $stmt = $conn->prepare("INSERT INTO appointments (patient_name, mobile, department, doctor, appointment_date, time_slot, status, age, gender, address) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param("ssssssssss", $patient_name, $mobile, $department, $doctor, $appointment_date, $time_slot, $status, $age, $gender, $address);
     $stmt->execute();
+
+    if ($status === 'Confirmed') {
+        $name_esc = $conn->real_escape_string(trim($patient_name));
+        $phone_esc = $conn->real_escape_string(trim($mobile));
+        $age_val = $age !== null ? $age : "NULL";
+        $gender_val = $gender !== null ? "'" . $conn->real_escape_string(trim($gender)) . "'" : "NULL";
+        $address_esc = $conn->real_escape_string(trim($address ?? ''));
+        $doctor_esc = $conn->real_escape_string(trim($doctor ?? ''));
+        
+        $check = $conn->query("SELECT id FROM patients WHERE phone = '$phone_esc' AND LOWER(name) = LOWER('$name_esc')");
+        if ($check && $check->num_rows == 0) {
+            $tableCheck = $conn->query("SHOW TABLES LIKE 'patients'");
+            if ($tableCheck && $tableCheck->num_rows > 0) {
+                $conn->query("INSERT INTO patients (name, phone, age, gender, address, doctor_appointed) VALUES ('$name_esc', '$phone_esc', $age_val, $gender_val, '$address_esc', '$doctor_esc')");
+            }
+        }
+    }
 
     header("Location: appointments.php");
     exit;
@@ -89,9 +133,7 @@ if (isset($_GET['from_date']) || isset($_GET['to_date'])) {
 } else {
     if (!isset($_GET['status']) && !isset($_GET['search']) && !isset($_GET['doctor'])) {
         $_GET['from_date'] = date('Y-m-d');
-        $_GET['to_date'] = date('Y-m-d');
         $conditions[] = "appointment_date >= '" . date('Y-m-d') . "'";
-        $conditions[] = "appointment_date <= '" . date('Y-m-d') . "'";
     }
 }
 
@@ -242,24 +284,25 @@ if ($favResult && $favResult->num_rows > 0) {
             <form method="POST">
                 <input type="hidden" name="csrf_token" value="<?= generateCsrfToken() ?>">
                 <div class="form-grid">
-                    <input type="text" name="patient_name" class="form-input" placeholder="Patient Name" required>
-                    <input type="text" name="mobile" class="form-input" placeholder="Mobile Number" required>
+                    <input type="text" name="patient_name" class="form-input" placeholder="Patient Name" value="<?= isset($_GET['patient_name']) ? htmlspecialchars($_GET['patient_name']) : '' ?>" required>
+                    <input type="text" name="mobile" class="form-input" placeholder="Mobile Number" value="<?= isset($_GET['mobile']) ? htmlspecialchars($_GET['mobile']) : '' ?>" required>
                     
                     <?php if (!empty($form_settings['appointment_show_age'])): ?>
-                        <input type="number" name="age" class="form-input" placeholder="Age">
+                        <input type="number" name="age" class="form-input" placeholder="Age" value="<?= isset($_GET['age']) ? htmlspecialchars($_GET['age']) : '' ?>">
                     <?php endif; ?>
 
                     <?php if (!empty($form_settings['appointment_show_gender'])): ?>
+                        <?php $selected_gender = isset($_GET['gender']) ? $_GET['gender'] : ''; ?>
                         <select name="gender" class="form-input">
                             <option value="">Select Gender</option>
-                            <option value="Male">Male</option>
-                            <option value="Female">Female</option>
-                            <option value="Other">Other</option>
+                            <option value="Male" <?= $selected_gender == 'Male' ? 'selected' : '' ?>>Male</option>
+                            <option value="Female" <?= $selected_gender == 'Female' ? 'selected' : '' ?>>Female</option>
+                            <option value="Other" <?= $selected_gender == 'Other' ? 'selected' : '' ?>>Other</option>
                         </select>
                     <?php endif; ?>
 
                     <?php if (!empty($form_settings['appointment_show_address'])): ?>
-                         <input type="text" name="address" class="form-input" placeholder="Address">
+                         <input type="text" name="address" class="form-input" placeholder="Address" value="<?= isset($_GET['address']) ? htmlspecialchars($_GET['address']) : '' ?>">
                     <?php endif; ?>
                     
                     <?php if (!isset($form_settings['appointment_show_department']) || $form_settings['appointment_show_department'] == '1'): ?>
@@ -298,11 +341,16 @@ if ($favResult && $favResult->num_rows > 0) {
 
                     <input type="text" name="appointment_date" class="form-input" onfocus="(this.type='date')" onblur="(this.value == '' ? this.type='text' : this.type='date')" placeholder="Select Date" required>
                     
+                    <select name="time_slot" class="form-input">
+                        <option value="">Select Time Slot (Optional)</option>
+                        <option value="Morning (9 AM - 12 PM)">Morning (9 AM - 12 PM)</option>
+                        <option value="Afternoon (12 PM - 3 PM)">Afternoon (12 PM - 3 PM)</option>
+                        <option value="Evening (3 PM - 6 PM)">Evening (3 PM - 6 PM)</option>
+                    </select>
+                    
                     <select name="status" class="form-input" required>
                         <option value="Pending">Pending</option>
                         <option value="Confirmed">Confirmed</option>
-                        <option value="Completed">Completed</option>
-                        <option value="Cancelled">Cancelled</option>
                     </select>
                 </div>
                 <div class="form-actions">
@@ -324,8 +372,6 @@ if ($favResult && $favResult->num_rows > 0) {
                         <option value="">All Statuses</option>
                         <option value="Pending" <?= (isset($_GET['status']) && $_GET['status'] == 'Pending') ? 'selected' : '' ?>>Pending</option>
                         <option value="Confirmed" <?= (isset($_GET['status']) && $_GET['status'] == 'Confirmed') ? 'selected' : '' ?>>Confirmed</option>
-                        <option value="Completed" <?= (isset($_GET['status']) && $_GET['status'] == 'Completed') ? 'selected' : '' ?>>Completed</option>
-                        <option value="Cancelled" <?= (isset($_GET['status']) && $_GET['status'] == 'Cancelled') ? 'selected' : '' ?>>Cancelled</option>
                     </select>
                     
                     <select name="doctor" class="filter-select">
@@ -381,7 +427,8 @@ if ($favResult && $favResult->num_rows > 0) {
                                 </td>
                                 <td>
                                     <div class="patient-info">
-                                        <span class="patient-name"><i class="far fa-calendar-alt" style="color: var(--primary);"></i> <?= htmlspecialchars(date('d M Y', strtotime($row['appointment_date']))) ?></span>
+                                        <span class="patient-name"><i class="far fa-calendar-alt" style="color: var(--primary);"></i> <?= htmlspecialchars(date('d M Y', strtotime($row['appointment_date']))) ?>
+                                        <?php if (!empty($row['time_slot'])): ?><br><small style="color: #64748b; font-weight: normal;"><i class="far fa-clock"></i> <?= htmlspecialchars($row['time_slot']) ?></small><?php endif; ?></span>
                                         <span class="patient-mobile">Requested: <?= htmlspecialchars(date('d M', strtotime($row['created_at']))) ?></span>
                                     </div>
                                 </td>
@@ -393,13 +440,14 @@ if ($favResult && $favResult->num_rows > 0) {
                                         <select name="status" class="status-select <?= strtolower($row['status']) ?>" onchange="this.form.submit()">
                                             <option value="Pending" <?= $row['status'] == 'Pending' ? 'selected' : '' ?>>Pending</option>
                                             <option value="Confirmed" <?= $row['status'] == 'Confirmed' ? 'selected' : '' ?>>Confirmed</option>
-                                            <option value="Completed" <?= $row['status'] == 'Completed' ? 'selected' : '' ?>>Completed</option>
-                                            <option value="Cancelled" <?= $row['status'] == 'Cancelled' ? 'selected' : '' ?>>Cancelled</option>
                                         </select>
                                     </form>
                                 </td>
                                 <td>
                                     <div class="action-flex">
+                                        <a href="appointments.php?action=add&patient_name=<?= urlencode($row['patient_name']) ?>&mobile=<?= urlencode($row['mobile']) ?>&age=<?= urlencode($row['age'] ?? '') ?>&gender=<?= urlencode($row['gender'] ?? '') ?>&address=<?= urlencode($row['address'] ?? '') ?>" class="book-btn">
+                                            <i class="fas fa-calendar-plus"></i> Rebook
+                                        </a>
                                         <a href="print_ticket.php?id=<?= $row['id'] ?>" target="_blank" class="print-btn">
                                             <i class="fas fa-print"></i> Print
                                         </a>

@@ -141,7 +141,7 @@ $favicon = $settings['favicon'] ?? '';
                         <?php 
                         $perms = $edit_user ? json_decode($edit_user['permissions'], true) : [];
                         if (!is_array($perms)) $perms = [];
-                        $modules = ['doctors' => 'Doctors', 'appointments' => 'Appointments', 'reports' => 'Reports', 'messages' => 'Messages', 'services' => 'Services', 'facilities' => 'Facilities', 'settings' => 'Settings'];
+                        $modules = ['doctors' => 'Doctors', 'appointments' => 'Appointments', 'patients' => 'Patients', 'reports' => 'Reports', 'messages' => 'Messages', 'services' => 'Services', 'facilities' => 'Facilities', 'settings' => 'Settings'];
                         ?>
                         <div class="perm-grid">
                             <?php foreach ($modules as $key => $label): ?>

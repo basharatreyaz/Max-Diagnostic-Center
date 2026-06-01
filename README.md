@@ -15,7 +15,7 @@ Max Diagnostic Center is a comprehensive clinic and diagnostic laboratory manage
 ### Admin Backend
 - **Dashboard Overview:** Quick statistics on doctors, total reports, and appointment statuses.
 - **Manage Appointments:** 
-  - View, filter, and update appointment statuses (Pending, Confirmed, Completed, Cancelled).
+  - View, filter, and update appointment statuses (Pending, Confirmed).
   - Export appointment lists to CSV or PDF.
   - Generate and print token tickets (includes a dynamic QR code for patients to download reports).
 - **Manage Reports:** Upload single or multiple file reports (PDF, JPG, PNG, DOC) linked to a patient's mobile number and name.
