@@ -505,7 +505,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['book_appointment'])) {
                     <h3 class="report-title">Patient Report Access</h3>
 
                     <p class="report-desc">
-                        Enter your Mobile Number
+                        Enter your Mobile Number and First Name
                         to download your reports.
                     </p>
 
@@ -527,7 +527,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['book_appointment'])) {
                         class="report-input"
                         type="text"
                         name="first_name"
-                        placeholder="First Name (Optional)">
+                        placeholder="First Name" required>
 
                     <button class="report-submit" type="submit" name="search_reports">
 

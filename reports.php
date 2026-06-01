@@ -60,7 +60,7 @@ include 'includes/header.php';
                     <h3 class="report-title">Patient Report Access</h3>
 
                     <p class="report-desc">
-                        Enter your Mobile Number
+                        Enter your Mobile Number and First Name
                         to download your reports.
                     </p>
 
