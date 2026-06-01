@@ -8,13 +8,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $reports = [];
     $tableCheck = $conn->query("SHOW TABLES LIKE 'reports'");
     if ($tableCheck && $tableCheck->num_rows > 0) {
-        if ($first_name !== '') {
-            $stmt = $conn->prepare("SELECT * FROM reports WHERE LOWER(patient_first_name) = ? AND mobile = ? ORDER BY uploaded_at DESC");
-            $stmt->bind_param("ss", $first_name, $mobile);
-        } else {
-            $stmt = $conn->prepare("SELECT * FROM reports WHERE mobile = ? ORDER BY uploaded_at DESC");
-            $stmt->bind_param("s", $mobile);
-        }
+        $stmt = $conn->prepare("SELECT * FROM reports WHERE LOWER(patient_first_name) = ? AND mobile = ? ORDER BY uploaded_at DESC");
+        $stmt->bind_param("ss", $first_name, $mobile);
         $stmt->execute();
         $result = $stmt->get_result();
         if ($result && $result->num_rows > 0) {

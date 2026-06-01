@@ -15,11 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['search_reports'])) {
     $reports_result = [];
     $tableCheck = $conn->query("SHOW TABLES LIKE 'reports'");
     if ($tableCheck && $tableCheck->num_rows > 0) {
-        if ($search_name !== '') {
-            $result = $conn->query("SELECT * FROM reports WHERE LOWER(patient_first_name) = '$search_name' AND mobile = '$search_mobile' ORDER BY uploaded_at DESC");
-        } else {
-            $result = $conn->query("SELECT * FROM reports WHERE mobile = '$search_mobile' ORDER BY uploaded_at DESC");
-        }
+        $result = $conn->query("SELECT * FROM reports WHERE LOWER(patient_first_name) = '$search_name' AND mobile = '$search_mobile' ORDER BY uploaded_at DESC");
         if ($result && $result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
                 $reports_result[] = $row;
@@ -88,7 +84,7 @@ include 'includes/header.php';
                         type="text"
                         name="first_name"
                         value="<?= htmlspecialchars($search_name) ?>"
-                        placeholder="First Name (Optional)">
+                        placeholder="First Name" required>
 
                     <button class="report-submit" type="submit" name="search_reports">
 
