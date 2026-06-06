@@ -62,15 +62,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_appointment'])) {
     $parsed = strtotime($raw_date);
     $appointment_date = $parsed ? date('Y-m-d', $parsed) : $_POST['appointment_date'];
 
-    $time_slot = isset($_POST['time_slot']) && $_POST['time_slot'] !== '' ? $_POST['time_slot'] : null;
     $status = $_POST['status'];
     
     $age = isset($_POST['age']) && $_POST['age'] !== '' ? (int)$_POST['age'] : null;
     $gender = isset($_POST['gender']) && $_POST['gender'] !== '' ? $_POST['gender'] : null;
     $address = isset($_POST['address']) && $_POST['address'] !== '' ? $_POST['address'] : null;
 
-    $stmt = $conn->prepare("INSERT INTO appointments (patient_name, mobile, department, doctor, appointment_date, time_slot, status, age, gender, address) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param("ssssssssss", $patient_name, $mobile, $department, $doctor, $appointment_date, $time_slot, $status, $age, $gender, $address);
+    $stmt = $conn->prepare("INSERT INTO appointments (patient_name, mobile, department, doctor, appointment_date, status, age, gender, address) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param("sssssssss", $patient_name, $mobile, $department, $doctor, $appointment_date, $status, $age, $gender, $address);
     $stmt->execute();
 
     if ($status === 'Confirmed') {
@@ -341,13 +340,6 @@ if ($favResult && $favResult->num_rows > 0) {
 
                     <input type="text" name="appointment_date" class="form-input" onfocus="(this.type='date')" onblur="(this.value == '' ? this.type='text' : this.type='date')" placeholder="Select Date" required>
                     
-                    <select name="time_slot" class="form-input">
-                        <option value="">Select Time Slot (Optional)</option>
-                        <option value="Morning (9 AM - 12 PM)">Morning (9 AM - 12 PM)</option>
-                        <option value="Afternoon (12 PM - 3 PM)">Afternoon (12 PM - 3 PM)</option>
-                        <option value="Evening (3 PM - 6 PM)">Evening (3 PM - 6 PM)</option>
-                    </select>
-                    
                     <select name="status" class="form-input" required>
                         <option value="Pending">Pending</option>
                         <option value="Confirmed">Confirmed</option>
@@ -427,8 +419,7 @@ if ($favResult && $favResult->num_rows > 0) {
                                 </td>
                                 <td>
                                     <div class="patient-info">
-                                        <span class="patient-name"><i class="far fa-calendar-alt" style="color: var(--primary);"></i> <?= htmlspecialchars(date('d M Y', strtotime($row['appointment_date']))) ?>
-                                        <?php if (!empty($row['time_slot'])): ?><br><small style="color: #64748b; font-weight: normal;"><i class="far fa-clock"></i> <?= htmlspecialchars($row['time_slot']) ?></small><?php endif; ?></span>
+                                        <span class="patient-name"><i class="far fa-calendar-alt" style="color: var(--primary);"></i> <?= htmlspecialchars(date('d M Y', strtotime($row['appointment_date']))) ?></span>
                                         <span class="patient-mobile">Requested: <?= htmlspecialchars(date('d M', strtotime($row['created_at']))) ?></span>
                                     </div>
                                 </td>
@@ -468,7 +459,53 @@ if ($favResult && $favResult->num_rows > 0) {
                     </tbody>
                 </table>
             </div>
-            <?php renderPaginationLinks($totalPages, $page); ?>
+            
+            <div id="infinite-scroll-spinner" style="display: none; text-align: center; padding: 20px; color: #64748b; font-weight: 500;">
+                <i class="fas fa-spinner fa-spin"></i> Loading more appointments...
+            </div>
+            
+            <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                let currentPage = <?= (int)$page ?>;
+                const totalPages = <?= (int)$totalPages ?>;
+                const tbody = document.querySelector('.table-responsive tbody');
+                const spinner = document.getElementById('infinite-scroll-spinner');
+                let isLoading = false;
+
+                function loadMore() {
+                    if (isLoading || currentPage >= totalPages) return;
+                    isLoading = true;
+                    
+                    currentPage++;
+                    const url = new URL(window.location.href);
+                    url.searchParams.set('page', currentPage);
+                    
+                    fetch(url).then(res => res.text()).then(html => {
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(html, 'text/html');
+                        const newRows = doc.querySelectorAll('.table-responsive tbody tr');
+                        
+                        newRows.forEach(row => tbody.appendChild(row));
+                        
+                        isLoading = false;
+                        if (currentPage >= totalPages) {
+                            spinner.style.display = 'none';
+                        }
+                    }).catch(() => { isLoading = false; });
+                }
+
+                const observer = new IntersectionObserver((entries) => {
+                    if (entries[0].isIntersecting) {
+                        loadMore();
+                    }
+                }, { rootMargin: '200px' });
+
+                if (currentPage < totalPages) {
+                    spinner.style.display = 'block';
+                    observer.observe(spinner);
+                }
+            });
+            </script>
         </div>
         <?php endif; ?>
         

@@ -407,7 +407,53 @@ $favicon = $settings['favicon'] ?? '';
                         </tbody>
                     </table>
                 </div>
-                <?php renderPaginationLinks($totalPages, $page); ?>
+                
+                <div id="infinite-scroll-spinner" style="display: none; text-align: center; padding: 20px; color: #64748b; font-weight: 500;">
+                    <i class="fas fa-spinner fa-spin"></i> Loading more reports...
+                </div>
+                
+                <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    let currentPage = <?= (int)$page ?>;
+                    const totalPages = <?= (int)$totalPages ?>;
+                    const tbody = document.querySelector('.table-responsive tbody');
+                    const spinner = document.getElementById('infinite-scroll-spinner');
+                    let isLoading = false;
+
+                    function loadMore() {
+                        if (isLoading || currentPage >= totalPages) return;
+                        isLoading = true;
+                        
+                        currentPage++;
+                        const url = new URL(window.location.href);
+                        url.searchParams.set('page', currentPage);
+                        
+                        fetch(url).then(res => res.text()).then(html => {
+                            const parser = new DOMParser();
+                            const doc = parser.parseFromString(html, 'text/html');
+                            const newRows = doc.querySelectorAll('.table-responsive tbody tr');
+                            
+                            newRows.forEach(row => tbody.appendChild(row));
+                            
+                            isLoading = false;
+                            if (currentPage >= totalPages) {
+                                spinner.style.display = 'none';
+                            }
+                        }).catch(() => { isLoading = false; });
+                    }
+
+                    const observer = new IntersectionObserver((entries) => {
+                        if (entries[0].isIntersecting) {
+                            loadMore();
+                        }
+                    }, { rootMargin: '200px' });
+
+                    if (currentPage < totalPages) {
+                        spinner.style.display = 'block';
+                        observer.observe(spinner);
+                    }
+                });
+                </script>
             </div>
             <?php endif; ?>
         </div>
